@@ -16,6 +16,7 @@ import CaraACara from './pages/CaraACara'
 import PalpiteBonus from './pages/PalpiteBonus'
 import Destaques from './pages/Destaques'
 import Boloes from './pages/Boloes'
+import Resultados from './pages/Resultados'
 
 function P({ children, adminOnly }) {
   return <ProtectedRoute adminOnly={adminOnly}>{children}</ProtectedRoute>
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="/bonus" element={<P><PalpiteBonus /></P>} />
             <Route path="/destaques" element={<P><Destaques /></P>} />
             <Route path="/boloes" element={<P><Boloes /></P>} />
+            <Route path="/resultados" element={<P><Resultados /></P>} />
             <Route path="/admin" element={<P adminOnly><Admin /></P>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

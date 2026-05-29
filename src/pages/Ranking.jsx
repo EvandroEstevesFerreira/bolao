@@ -28,11 +28,12 @@ export default function Ranking() {
   async function carregarRanking() {
     setCarregando(true)
 
-    const [palpitesRes, perfisRes, boloesRes, regrasRes] = await Promise.all([
+    const [palpitesRes, perfisRes, boloesRes, regrasRes, bonusRes] = await Promise.all([
       supabase.from('palpites').select('usuario_id, pontos'),
       supabase.from('perfis').select('id, nickname, avatar_url, setor_cr').eq('ativo', true),
       supabase.from('boloes').select('id, valor_arrecadado').limit(1).single(),
       supabase.from('premiacao_regras').select('*').order('posicao'),
+      supabase.from('palpites_bonus').select('usuario_id, pontos'),
     ])
 
     if (!palpitesRes.data || !perfisRes.data) {
@@ -42,6 +43,11 @@ export default function Ranking() {
 
     const perfisMap = {}
     perfisRes.data.forEach(p => { perfisMap[p.id] = p })
+
+    const bonusMap = {}
+    bonusRes.data?.forEach(b => {
+      bonusMap[b.usuario_id] = (bonusMap[b.usuario_id] || 0) + (b.pontos || 0)
+    })
 
     const stats = {}
     palpitesRes.data.forEach(p => {
@@ -53,6 +59,7 @@ export default function Ranking() {
           pontos5: 0,
           pontos2: 0,
           totalPalpites: 0,
+          bonusCampeao: 0,
         }
       }
       const s = stats[p.usuario_id]
@@ -62,6 +69,14 @@ export default function Ranking() {
       else if (p.pontos === 7) s.pontos7++
       else if (p.pontos === 5) s.pontos5++
       else if (p.pontos === 2) s.pontos2++
+    })
+
+    Object.entries(bonusMap).forEach(([uid, pts]) => {
+      if (!stats[uid]) {
+        stats[uid] = { totalPontos: 0, cravadas: 0, pontos7: 0, pontos5: 0, pontos2: 0, totalPalpites: 0, bonusCampeao: 0 }
+      }
+      stats[uid].bonusCampeao = pts
+      stats[uid].totalPontos += pts
     })
 
     const rankingList = Object.entries(stats)
@@ -76,7 +91,8 @@ export default function Ranking() {
         if (b.pontos7 !== a.pontos7) return b.pontos7 - a.pontos7
         if (b.pontos5 !== a.pontos5) return b.pontos5 - a.pontos5
         if (b.pontos2 !== a.pontos2) return b.pontos2 - a.pontos2
-        return b.totalPalpites - a.totalPalpites
+        if (b.totalPalpites !== a.totalPalpites) return b.totalPalpites - a.totalPalpites
+        return (b.bonusCampeao || 0) - (a.bonusCampeao || 0)
       })
 
     setRanking(rankingList)

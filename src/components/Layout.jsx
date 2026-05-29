@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
 import {
   Home, Trophy, ClipboardList, User, Shield, LogOut,
-  MessageCircle, Sun, Moon, Star, Menu, X,
+  MessageCircle, Sun, Moon, Star, Menu, X, Tv, Users,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -16,9 +16,11 @@ const navItems = [
 ]
 
 const menuItems = [
+  { path: '/resultados', label: 'Resultados', icon: Tv },
   { path: '/destaques', label: 'Destaques', icon: Star },
   { path: '/conquistas', label: 'Conquistas', icon: Trophy },
   { path: '/cara-a-cara', label: 'Cara a Cara', icon: User },
+  { path: '/boloes', label: 'Bolões', icon: Users },
   { path: '/bonus', label: 'Palpite Bônus', icon: Trophy },
   { path: '/regulamento', label: 'Regulamento', icon: ClipboardList },
 ]
