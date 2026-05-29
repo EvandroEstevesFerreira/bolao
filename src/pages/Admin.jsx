@@ -4,7 +4,10 @@ import { supabase } from '../lib/supabase'
 import { validarCPF, limparCPF, formatarCPF } from '../lib/cpf'
 import { formatarMoeda } from '../lib/formatters'
 import { calcularPontos } from '../lib/pontuacao'
-import { Users, Link2, Trophy, Settings, Plus, Copy, Check, RefreshCw } from 'lucide-react'
+import {
+  Users, Link2, Trophy, Settings, Plus, Copy, Check,
+  RefreshCw, DollarSign, BarChart3, FileText,
+} from 'lucide-react'
 import Layout from '../components/Layout'
 
 function AbaUsuarios() {
@@ -12,8 +15,10 @@ function AbaUsuarios() {
   const [carregando, setCarregando] = useState(true)
   const [novoCpf, setNovoCpf] = useState('')
   const [novoNome, setNovoNome] = useState('')
+  const [lote, setLote] = useState('')
   const [erro, setErro] = useState('')
   const [sucesso, setSucesso] = useState('')
+  const [modoLote, setModoLote] = useState(false)
 
   useEffect(() => { carregarUsuarios() }, [])
 
@@ -47,38 +52,89 @@ function AbaUsuarios() {
     }
   }
 
+  async function cadastrarLote() {
+    setErro(''); setSucesso('')
+    const linhas = lote.split('\n').filter(l => l.trim())
+    let ok = 0, erros = 0
+
+    for (const linha of linhas) {
+      const partes = linha.split(/[;,\t]/).map(p => p.trim())
+      if (partes.length < 2) { erros++; continue }
+      const cpf = limparCPF(partes[0])
+      const nome = partes[1]
+      if (!validarCPF(cpf) || !nome) { erros++; continue }
+
+      const { error } = await supabase.from('perfis').insert({
+        cpf,
+        nome,
+        nickname: nome.split(' ')[0].toLowerCase() + Math.floor(Math.random() * 100),
+      })
+      if (error) erros++
+      else ok++
+    }
+
+    setSucesso(`${ok} cadastrados, ${erros} erros.`)
+    setLote('')
+    carregarUsuarios()
+  }
+
   async function toggleAtivo(usuario) {
     await supabase.from('perfis').update({ ativo: !usuario.ativo }).eq('id', usuario.id)
     carregarUsuarios()
   }
 
+  async function toggleAdmin(usuario) {
+    await supabase.from('perfis').update({ is_admin: !usuario.is_admin }).eq('id', usuario.id)
+    carregarUsuarios()
+  }
+
   return (
     <div className="space-y-4">
-      <form onSubmit={cadastrarUsuario} className="card">
-        <h4 className="font-semibold mb-3 flex items-center gap-2">
-          <Plus size={16} /> Cadastrar Participante
-        </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <input
-            type="text"
-            value={novoCpf}
-            onChange={(e) => setNovoCpf(e.target.value.length <= 14 ? formatarCPF(limparCPF(e.target.value)) : novoCpf)}
-            placeholder="CPF"
-            className="input-field"
-            inputMode="numeric"
+      <div className="flex gap-2 mb-2">
+        <button onClick={() => setModoLote(false)} className={`text-sm px-3 py-1 rounded-lg ${!modoLote ? 'bg-primary text-white' : 'bg-gray-200'}`}>Individual</button>
+        <button onClick={() => setModoLote(true)} className={`text-sm px-3 py-1 rounded-lg ${modoLote ? 'bg-primary text-white' : 'bg-gray-200'}`}>Em lote</button>
+      </div>
+
+      {modoLote ? (
+        <div className="card space-y-3">
+          <h4 className="font-semibold">Cadastro em lote</h4>
+          <p className="text-xs text-gray-500">Uma pessoa por linha: CPF;Nome completo</p>
+          <textarea
+            value={lote}
+            onChange={e => setLote(e.target.value)}
+            placeholder="12345678901;João da Silva&#10;98765432100;Maria Santos"
+            className="input-field h-32 font-mono text-sm"
           />
-          <input
-            type="text"
-            value={novoNome}
-            onChange={(e) => setNovoNome(e.target.value)}
-            placeholder="Nome completo"
-            className="input-field"
-          />
-          <button type="submit" className="btn-primary">Cadastrar</button>
+          <button onClick={cadastrarLote} className="btn-primary">Cadastrar Todos</button>
+          {sucesso && <p className="text-green-600 text-sm">{sucesso}</p>}
         </div>
-        {erro && <p className="text-red-500 text-sm mt-2">{erro}</p>}
-        {sucesso && <p className="text-green-600 text-sm mt-2">{sucesso}</p>}
-      </form>
+      ) : (
+        <form onSubmit={cadastrarUsuario} className="card">
+          <h4 className="font-semibold mb-3 flex items-center gap-2">
+            <Plus size={16} /> Cadastrar Participante
+          </h4>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <input
+              type="text"
+              value={novoCpf}
+              onChange={(e) => setNovoCpf(e.target.value.length <= 14 ? formatarCPF(limparCPF(e.target.value)) : novoCpf)}
+              placeholder="CPF"
+              className="input-field"
+              inputMode="numeric"
+            />
+            <input
+              type="text"
+              value={novoNome}
+              onChange={(e) => setNovoNome(e.target.value)}
+              placeholder="Nome completo"
+              className="input-field"
+            />
+            <button type="submit" className="btn-primary">Cadastrar</button>
+          </div>
+          {erro && <p className="text-red-500 text-sm mt-2">{erro}</p>}
+          {sucesso && <p className="text-green-600 text-sm mt-2">{sucesso}</p>}
+        </form>
+      )}
 
       <div className="card">
         <div className="flex items-center justify-between mb-3">
@@ -101,6 +157,7 @@ function AbaUsuarios() {
                   <th className="py-2">Nickname</th>
                   <th className="py-2">CR</th>
                   <th className="py-2 text-center">Ativo</th>
+                  <th className="py-2 text-center">Admin</th>
                 </tr>
               </thead>
               <tbody>
@@ -119,6 +176,16 @@ function AbaUsuarios() {
                         {u.ativo ? 'Sim' : 'Não'}
                       </button>
                     </td>
+                    <td className="py-2 text-center">
+                      <button
+                        onClick={() => toggleAdmin(u)}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          u.is_admin ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-500'
+                        }`}
+                      >
+                        {u.is_admin ? 'Sim' : 'Não'}
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -134,6 +201,7 @@ function AbaConvites() {
   const { perfil } = useAuth()
   const [convites, setConvites] = useState([])
   const [copiado, setCopiado] = useState(null)
+  const [qtd, setQtd] = useState(1)
 
   useEffect(() => { carregarConvites() }, [])
 
@@ -142,13 +210,16 @@ function AbaConvites() {
     setConvites(data || [])
   }
 
-  async function gerarConvite() {
-    const token = crypto.randomUUID().replace(/-/g, '').slice(0, 12)
-    await supabase.from('convites').insert({
-      token,
-      criado_por: perfil.id,
-      expira_em: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    })
+  async function gerarConvites() {
+    const novos = []
+    for (let i = 0; i < qtd; i++) {
+      novos.push({
+        token: crypto.randomUUID().replace(/-/g, '').slice(0, 12),
+        criado_por: perfil.id,
+        expira_em: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      })
+    }
+    await supabase.from('convites').insert(novos)
     carregarConvites()
   }
 
@@ -159,11 +230,27 @@ function AbaConvites() {
     setTimeout(() => setCopiado(null), 2000)
   }
 
+  const usados = convites.filter(c => c.usado_em).length
+  const disponiveis = convites.filter(c => !c.usado_em).length
+
   return (
     <div className="space-y-4">
-      <button onClick={gerarConvite} className="btn-primary flex items-center gap-2">
-        <Plus size={16} /> Gerar Novo Convite
-      </button>
+      <div className="flex items-center gap-3">
+        <input
+          type="number" min="1" max="50" value={qtd}
+          onChange={e => setQtd(Math.max(1, parseInt(e.target.value) || 1))}
+          className="w-20 input-field text-center"
+        />
+        <button onClick={gerarConvites} className="btn-primary flex items-center gap-2">
+          <Plus size={16} /> Gerar {qtd > 1 ? `${qtd} Convites` : 'Convite'}
+        </button>
+      </div>
+
+      <div className="flex gap-4 text-sm text-gray-500">
+        <span>Total: {convites.length}</span>
+        <span>Usados: {usados}</span>
+        <span>Disponíveis: {disponiveis}</span>
+      </div>
 
       <div className="space-y-2">
         {convites.map(c => (
@@ -186,9 +273,6 @@ function AbaConvites() {
             </button>
           </div>
         ))}
-        {convites.length === 0 && (
-          <p className="text-center text-gray-500 py-4">Nenhum convite gerado.</p>
-        )}
       </div>
     </div>
   )
@@ -200,6 +284,7 @@ function AbaPlacar() {
   const [editando, setEditando] = useState(null)
   const [placarCasa, setPlacarCasa] = useState('')
   const [placarFora, setPlacarFora] = useState('')
+  const [filtroStatus, setFiltroStatus] = useState('todos')
 
   useEffect(() => { carregarDados() }, [])
 
@@ -235,15 +320,38 @@ function AbaPlacar() {
       }
     }
 
+    // Snapshot antifraude
+    if (palpites) {
+      await supabase.from('snapshots_palpites').insert({
+        partida_id: partida.id,
+        conteudo: palpites,
+      })
+    }
+
     setEditando(null)
     carregarDados()
   }
 
+  const filtradas = partidas.filter(p => filtroStatus === 'todos' || p.status === filtroStatus)
+
   return (
     <div className="space-y-3">
-      <h4 className="font-semibold">Override de Placar</h4>
+      <div className="flex gap-2">
+        {['todos', 'agendado', 'ao_vivo', 'encerrado'].map(s => (
+          <button
+            key={s}
+            onClick={() => setFiltroStatus(s)}
+            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+              filtroStatus === s ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            {s === 'todos' ? 'Todos' : s === 'agendado' ? 'Agendado' : s === 'ao_vivo' ? 'Ao Vivo' : 'Encerrado'}
+          </button>
+        ))}
+      </div>
+
       <div className="space-y-2">
-        {partidas.slice(0, 20).map(p => (
+        {filtradas.map(p => (
           <div key={p.id} className="card flex items-center justify-between py-3">
             <div className="text-sm">
               <span className="font-semibold">{selecoes[p.selecao_casa_id]?.codigo_fifa || '?'}</span>
@@ -294,14 +402,382 @@ function AbaPlacar() {
   )
 }
 
+function AbaFinanceiro() {
+  const [boloes, setBoloes] = useState([])
+  const [participantes, setParticipantes] = useState([])
+  const [bolaoSelecionado, setBolaoSelecionado] = useState(null)
+  const [carregando, setCarregando] = useState(true)
+
+  useEffect(() => { carregarBoloes() }, [])
+
+  async function carregarBoloes() {
+    setCarregando(true)
+    const { data } = await supabase.from('boloes').select('*')
+    setBoloes(data || [])
+    if (data?.length) {
+      setBolaoSelecionado(data[0].id)
+      carregarParticipantes(data[0].id)
+    }
+    setCarregando(false)
+  }
+
+  async function carregarParticipantes(bolaoId) {
+    const { data } = await supabase
+      .from('bolao_participantes')
+      .select('*, perfis(nome, nickname, cpf)')
+      .eq('bolao_id', bolaoId)
+    setParticipantes(data || [])
+  }
+
+  async function togglePago(bp) {
+    const agora = new Date().toISOString()
+    await supabase.from('bolao_participantes').update({
+      pago: !bp.pago,
+      data_pagamento: !bp.pago ? agora : null,
+    }).eq('bolao_id', bp.bolao_id).eq('usuario_id', bp.usuario_id)
+
+    carregarParticipantes(bp.bolao_id)
+    recalcularArrecadado(bp.bolao_id)
+  }
+
+  async function atualizarValorPago(bp, valor) {
+    await supabase.from('bolao_participantes').update({
+      valor_pago: parseFloat(valor) || 0,
+    }).eq('bolao_id', bp.bolao_id).eq('usuario_id', bp.usuario_id)
+
+    carregarParticipantes(bp.bolao_id)
+    recalcularArrecadado(bp.bolao_id)
+  }
+
+  async function recalcularArrecadado(bolaoId) {
+    const { data } = await supabase
+      .from('bolao_participantes')
+      .select('valor_pago')
+      .eq('bolao_id', bolaoId)
+      .eq('pago', true)
+
+    const total = (data || []).reduce((acc, p) => acc + (p.valor_pago || 0), 0)
+    await supabase.from('boloes').update({ valor_arrecadado: total }).eq('id', bolaoId)
+  }
+
+  const bolaoAtual = boloes.find(b => b.id === bolaoSelecionado)
+  const pagos = participantes.filter(p => p.pago).length
+  const totalArrecadado = participantes.filter(p => p.pago).reduce((acc, p) => acc + (p.valor_pago || 0), 0)
+
+  return (
+    <div className="space-y-4">
+      {boloes.length === 0 ? (
+        <p className="text-gray-500 text-center py-4">Nenhum bolão criado.</p>
+      ) : (
+        <>
+          <select
+            value={bolaoSelecionado || ''}
+            onChange={e => { setBolaoSelecionado(e.target.value); carregarParticipantes(e.target.value) }}
+            className="input-field"
+          >
+            {boloes.map(b => <option key={b.id} value={b.id}>{b.nome}</option>)}
+          </select>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div className="card text-center">
+              <p className="text-2xl font-bold">{participantes.length}</p>
+              <p className="text-xs text-gray-500">Participantes</p>
+            </div>
+            <div className="card text-center">
+              <p className="text-2xl font-bold text-green-600">{pagos}</p>
+              <p className="text-xs text-gray-500">Pagos</p>
+            </div>
+            <div className="card text-center">
+              <p className="text-2xl font-bold text-primary">{formatarMoeda(totalArrecadado)}</p>
+              <p className="text-xs text-gray-500">Arrecadado</p>
+            </div>
+          </div>
+
+          <div className="card overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-gray-200 text-left">
+                  <th className="py-2">Nome</th>
+                  <th className="py-2">Valor</th>
+                  <th className="py-2 text-center">Pago</th>
+                  <th className="py-2">Data</th>
+                </tr>
+              </thead>
+              <tbody>
+                {participantes.map(bp => (
+                  <tr key={bp.usuario_id} className="border-b border-gray-100">
+                    <td className="py-2">{bp.perfis?.nickname || bp.perfis?.nome || '—'}</td>
+                    <td className="py-2">
+                      <input
+                        type="number" step="0.01" min="0"
+                        defaultValue={bp.valor_pago || ''}
+                        onBlur={e => atualizarValorPago(bp, e.target.value)}
+                        className="w-24 text-sm px-2 py-1 rounded border"
+                      />
+                    </td>
+                    <td className="py-2 text-center">
+                      <button
+                        onClick={() => togglePago(bp)}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          bp.pago ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                        }`}
+                      >
+                        {bp.pago ? 'Sim' : 'Não'}
+                      </button>
+                    </td>
+                    <td className="py-2 text-xs text-gray-400">
+                      {bp.data_pagamento ? new Date(bp.data_pagamento).toLocaleDateString('pt-BR') : '—'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function AbaDashboard() {
+  const [stats, setStats] = useState(null)
+  const [carregando, setCarregando] = useState(true)
+
+  useEffect(() => { carregarStats() }, [])
+
+  async function carregarStats() {
+    setCarregando(true)
+    const [perfisRes, palpitesRes, partidasRes, bpRes] = await Promise.all([
+      supabase.from('perfis').select('id, ativo, setor_cr'),
+      supabase.from('palpites').select('usuario_id, partida_id'),
+      supabase.from('partidas').select('id, status'),
+      supabase.from('bolao_participantes').select('pago'),
+    ])
+
+    const perfis = perfisRes.data || []
+    const palpites = palpitesRes.data || []
+    const partidas = partidasRes.data || []
+    const bp = bpRes.data || []
+
+    const ativos = perfis.filter(p => p.ativo).length
+    const encerrados = partidas.filter(p => p.status === 'encerrado').length
+    const pagos = bp.filter(p => p.pago).length
+
+    const porCR = {}
+    perfis.forEach(p => {
+      if (p.setor_cr) {
+        porCR[p.setor_cr] = (porCR[p.setor_cr] || 0) + 1
+      }
+    })
+
+    const palpitanteUnicos = new Set(palpites.map(p => p.usuario_id)).size
+    const palpitesPorJogo = {}
+    palpites.forEach(p => {
+      palpitesPorJogo[p.partida_id] = (palpitesPorJogo[p.partida_id] || 0) + 1
+    })
+
+    setStats({
+      totalPerfis: perfis.length,
+      ativos,
+      encerrados,
+      totalPartidas: partidas.length,
+      pagos,
+      totalBP: bp.length,
+      palpitanteUnicos,
+      porCR,
+      mediaPalpitesPorJogo: encerrados > 0
+        ? Math.round(Object.values(palpitesPorJogo).reduce((a, b) => a + b, 0) / Math.max(Object.keys(palpitesPorJogo).length, 1))
+        : 0,
+    })
+    setCarregando(false)
+  }
+
+  if (carregando) return (
+    <div className="flex justify-center py-8">
+      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
+
+  if (!stats) return null
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="card text-center">
+          <p className="text-2xl font-bold">{stats.totalPerfis}</p>
+          <p className="text-xs text-gray-500">Cadastrados</p>
+        </div>
+        <div className="card text-center">
+          <p className="text-2xl font-bold text-green-600">{stats.ativos}</p>
+          <p className="text-xs text-gray-500">Ativos</p>
+        </div>
+        <div className="card text-center">
+          <p className="text-2xl font-bold text-blue-600">{stats.palpitanteUnicos}</p>
+          <p className="text-xs text-gray-500">Palpitando</p>
+        </div>
+        <div className="card text-center">
+          <p className="text-2xl font-bold text-primary">{stats.pagos}/{stats.totalBP}</p>
+          <p className="text-xs text-gray-500">Pagamentos</p>
+        </div>
+      </div>
+
+      <div className="card">
+        <h4 className="font-semibold mb-3">Progresso do Torneio</h4>
+        <div className="flex items-center gap-3">
+          <div className="flex-1 bg-gray-200 rounded-full h-3">
+            <div
+              className="bg-primary rounded-full h-3 transition-all"
+              style={{ width: `${(stats.encerrados / Math.max(stats.totalPartidas, 1)) * 100}%` }}
+            />
+          </div>
+          <span className="text-sm font-semibold">{stats.encerrados}/{stats.totalPartidas}</span>
+        </div>
+        <p className="text-xs text-gray-500 mt-1">jogos encerrados</p>
+      </div>
+
+      {Object.keys(stats.porCR).length > 0 && (
+        <div className="card">
+          <h4 className="font-semibold mb-3">Participantes por CR/Setor</h4>
+          <div className="space-y-2">
+            {Object.entries(stats.porCR).sort((a, b) => b[1] - a[1]).map(([cr, count]) => (
+              <div key={cr} className="flex items-center justify-between text-sm">
+                <span className="font-medium">{cr}</span>
+                <span className="bg-gray-100 px-2 py-0.5 rounded text-gray-600">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="card">
+        <p className="text-sm text-gray-500">
+          Média de palpites por jogo: <strong>{stats.mediaPalpitesPorJogo}</strong>
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function AbaPremiacao() {
+  const [boloes, setBoloes] = useState([])
+  const [bolaoId, setBolaoId] = useState(null)
+  const [regras, setRegras] = useState([])
+  const [novaPos, setNovaPos] = useState('')
+  const [novoPerc, setNovoPerc] = useState('')
+
+  useEffect(() => { carregarBoloes() }, [])
+
+  async function carregarBoloes() {
+    const { data } = await supabase.from('boloes').select('*')
+    setBoloes(data || [])
+    if (data?.length) {
+      setBolaoId(data[0].id)
+      carregarRegras(data[0].id)
+    }
+  }
+
+  async function carregarRegras(bid) {
+    const { data } = await supabase.from('premiacao_regras').select('*').eq('bolao_id', bid).order('posicao')
+    setRegras(data || [])
+  }
+
+  async function adicionarRegra() {
+    const pos = parseInt(novaPos)
+    const perc = parseFloat(novoPerc)
+    if (!bolaoId || isNaN(pos) || isNaN(perc)) return
+
+    await supabase.from('premiacao_regras').upsert({
+      bolao_id: bolaoId,
+      posicao: pos,
+      percentual: perc,
+    })
+    setNovaPos(''); setNovoPerc('')
+    carregarRegras(bolaoId)
+  }
+
+  async function removerRegra(posicao) {
+    await supabase.from('premiacao_regras').delete().eq('bolao_id', bolaoId).eq('posicao', posicao)
+    carregarRegras(bolaoId)
+  }
+
+  const totalPerc = regras.reduce((acc, r) => acc + (r.percentual || 0), 0)
+  const bolao = boloes.find(b => b.id === bolaoId)
+
+  return (
+    <div className="space-y-4">
+      {boloes.length === 0 ? (
+        <p className="text-gray-500 text-center py-4">Nenhum bolão criado.</p>
+      ) : (
+        <>
+          <select
+            value={bolaoId || ''}
+            onChange={e => { setBolaoId(e.target.value); carregarRegras(e.target.value) }}
+            className="input-field"
+          >
+            {boloes.map(b => <option key={b.id} value={b.id}>{b.nome}</option>)}
+          </select>
+
+          {bolao && (
+            <div className="card text-sm space-y-2">
+              <p>Valor inscrição: <strong>{formatarMoeda(bolao.valor_inscricao)}</strong></p>
+              <p>Arrecadado: <strong>{formatarMoeda(bolao.valor_arrecadado)}</strong></p>
+            </div>
+          )}
+
+          <div className="card">
+            <h4 className="font-semibold mb-3">Regras de Premiação</h4>
+            <div className="space-y-2 mb-4">
+              {regras.map(r => (
+                <div key={r.posicao} className="flex items-center justify-between text-sm">
+                  <span>{r.posicao}º lugar — <strong>{r.percentual}%</strong></span>
+                  {bolao && <span className="text-gray-500">{formatarMoeda(bolao.valor_arrecadado * r.percentual / 100)}</span>}
+                  <button onClick={() => removerRegra(r.posicao)} className="text-red-500 text-xs">Remover</button>
+                </div>
+              ))}
+              {regras.length === 0 && <p className="text-gray-400 text-sm">Nenhuma regra configurada.</p>}
+            </div>
+
+            <p className={`text-sm mb-3 ${Math.abs(totalPerc - 100) < 0.01 ? 'text-green-600' : 'text-orange-500'}`}>
+              Total: {totalPerc.toFixed(2)}% {Math.abs(totalPerc - 100) < 0.01 ? '✓' : '(deve somar 100%)'}
+            </p>
+
+            <div className="flex gap-2">
+              <input
+                type="number" min="1" placeholder="Posição"
+                value={novaPos} onChange={e => setNovaPos(e.target.value)}
+                className="w-24 input-field text-sm"
+              />
+              <input
+                type="number" step="0.01" min="0" max="100" placeholder="%"
+                value={novoPerc} onChange={e => setNovoPerc(e.target.value)}
+                className="w-24 input-field text-sm"
+              />
+              <button onClick={adicionarRegra} className="btn-primary text-sm px-4">Adicionar</button>
+            </div>
+          </div>
+
+          <div className="card bg-yellow-50 border-yellow-200">
+            <p className="text-xs text-yellow-800">
+              O sistema calcula e exibe os valores estimados. A entrega dos prêmios é responsabilidade do organizador.
+            </p>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 const ABAS = [
+  { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
   { id: 'usuarios', label: 'Usuários', icon: Users },
   { id: 'convites', label: 'Convites', icon: Link2 },
-  { id: 'placar', label: 'Placar', icon: Trophy },
+  { id: 'financeiro', label: 'Financeiro', icon: DollarSign },
+  { id: 'premiacao', label: 'Premiação', icon: Trophy },
+  { id: 'placar', label: 'Placar', icon: FileText },
 ]
 
 export default function Admin() {
-  const [abaAtiva, setAbaAtiva] = useState('usuarios')
+  const [abaAtiva, setAbaAtiva] = useState('dashboard')
 
   return (
     <Layout>
@@ -311,13 +787,13 @@ export default function Admin() {
           Painel Administrativo
         </h2>
 
-        <div className="flex gap-2 overflow-x-auto">
+        <div className="flex gap-2 overflow-x-auto pb-1">
           {ABAS.map(aba => (
             <button
               key={aba.id}
               onClick={() => setAbaAtiva(aba.id)}
               className={`px-4 py-2 rounded-full text-sm font-medium flex items-center gap-1.5 whitespace-nowrap transition-colors ${
-                abaAtiva === aba.id ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'
+                abaAtiva === aba.id ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
               }`}
             >
               <aba.icon size={14} />
@@ -326,8 +802,11 @@ export default function Admin() {
           ))}
         </div>
 
+        {abaAtiva === 'dashboard' && <AbaDashboard />}
         {abaAtiva === 'usuarios' && <AbaUsuarios />}
         {abaAtiva === 'convites' && <AbaConvites />}
+        {abaAtiva === 'financeiro' && <AbaFinanceiro />}
+        {abaAtiva === 'premiacao' && <AbaPremiacao />}
         {abaAtiva === 'placar' && <AbaPlacar />}
       </div>
     </Layout>

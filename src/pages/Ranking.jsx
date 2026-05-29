@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
-import { Trophy, Medal, TrendingUp } from 'lucide-react'
+import { Trophy, Medal, TrendingUp, DollarSign } from 'lucide-react'
+import { formatarMoeda } from '../lib/formatters'
 import Layout from '../components/Layout'
 
 export default function Ranking() {
@@ -9,6 +10,7 @@ export default function Ranking() {
   const [ranking, setRanking] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [filtro, setFiltro] = useState('geral')
+  const [premiacao, setPremiacao] = useState({ regras: [], arrecadado: 0 })
 
   useEffect(() => {
     carregarRanking()
@@ -26,9 +28,11 @@ export default function Ranking() {
   async function carregarRanking() {
     setCarregando(true)
 
-    const [palpitesRes, perfisRes] = await Promise.all([
+    const [palpitesRes, perfisRes, boloesRes, regrasRes] = await Promise.all([
       supabase.from('palpites').select('usuario_id, pontos'),
       supabase.from('perfis').select('id, nickname, avatar_url, setor_cr').eq('ativo', true),
+      supabase.from('boloes').select('id, valor_arrecadado').limit(1).single(),
+      supabase.from('premiacao_regras').select('*').order('posicao'),
     ])
 
     if (!palpitesRes.data || !perfisRes.data) {
@@ -76,7 +80,17 @@ export default function Ranking() {
       })
 
     setRanking(rankingList)
+    setPremiacao({
+      regras: regrasRes.data || [],
+      arrecadado: boloesRes.data?.valor_arrecadado || 0,
+    })
     setCarregando(false)
+  }
+
+  function getPremioPosicao(pos) {
+    const regra = premiacao.regras.find(r => r.posicao === pos + 1)
+    if (!regra || !premiacao.arrecadado) return null
+    return premiacao.arrecadado * regra.percentual / 100
   }
 
   const rankingFiltrado = filtro === 'geral'
@@ -165,6 +179,12 @@ export default function Ranking() {
                     <p className="text-xs text-gray-400">
                       {item.cravadas > 0 && `${item.cravadas}🎯`} {item.totalPalpites} jogos
                     </p>
+                    {getPremioPosicao(idx) && (
+                      <p className="text-xs text-green-600 font-semibold flex items-center justify-end gap-0.5 mt-0.5">
+                        <DollarSign size={10} />
+                        {formatarMoeda(getPremioPosicao(idx))}
+                      </p>
+                    )}
                   </div>
                 </div>
               )

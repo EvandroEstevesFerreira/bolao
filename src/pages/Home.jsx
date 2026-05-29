@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { formatarDataHora, jogoJaComecou } from '../lib/formatters'
-import { Trophy, ClipboardList, Calendar, TrendingUp } from 'lucide-react'
+import { Trophy, ClipboardList, Calendar, TrendingUp, Star, Award, Swords, MessageCircle } from 'lucide-react'
 import Layout from '../components/Layout'
 
 export default function Home() {
@@ -141,6 +141,25 @@ export default function Home() {
               ))}
             </div>
           )}
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <Link to="/destaques" className="card text-center hover:shadow-md transition-shadow">
+            <Star className="mx-auto text-yellow-500 mb-1" size={20} />
+            <p className="text-xs font-semibold">Destaques</p>
+          </Link>
+          <Link to="/conquistas" className="card text-center hover:shadow-md transition-shadow">
+            <Award className="mx-auto text-purple-500 mb-1" size={20} />
+            <p className="text-xs font-semibold">Conquistas</p>
+          </Link>
+          <Link to="/cara-a-cara" className="card text-center hover:shadow-md transition-shadow">
+            <Swords className="mx-auto text-blue-500 mb-1" size={20} />
+            <p className="text-xs font-semibold">Cara a Cara</p>
+          </Link>
+          <Link to="/bonus" className="card text-center hover:shadow-md transition-shadow">
+            <Trophy className="mx-auto text-primary mb-1" size={20} />
+            <p className="text-xs font-semibold">Palpite Bônus</p>
+          </Link>
         </div>
 
         <Link
