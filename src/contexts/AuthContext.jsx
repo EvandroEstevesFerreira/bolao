@@ -38,6 +38,10 @@ export function AuthProvider({ children }) {
       if (isHash) {
         const ok = await verificarPin(pin, data.pin_hash)
         if (!ok) throw new Error('PIN incorreto.')
+        const currentHash = await hashPin(pin)
+        if (currentHash !== data.pin_hash) {
+          await supabase.from('perfis').update({ pin_hash: currentHash }).eq('id', data.id)
+        }
       } else {
         if (data.pin_hash !== pin) throw new Error('PIN incorreto.')
         const novoHash = await hashPin(pin)

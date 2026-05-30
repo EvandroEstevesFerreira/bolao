@@ -57,7 +57,7 @@ export default function Convite() {
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-3">
-            <span className="text-white text-2xl font-bold">S</span>
+            <span className="text-white text-2xl font-bold">B</span>
           </div>
           <h1 className="text-xl font-bold text-white">Resgate seu Convite</h1>
           <p className="text-gray-400 text-sm mt-1">Preencha seus dados para participar</p>

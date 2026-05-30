@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bolao-sistenge-v1'
+const CACHE_NAME = 'bolao-copa-v2'
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -39,7 +39,7 @@ self.addEventListener('push', (event) => {
   if (!event.data) return
   const data = event.data.json()
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Bolão Sistenge', {
+    self.registration.showNotification(data.title || 'Bolão Copa 2026', {
       body: data.body || '',
       icon: '/favicon.svg',
       badge: '/favicon.svg',

@@ -44,10 +44,10 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-3xl font-bold">S</span>
+            <span className="text-white text-3xl font-bold">B</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Sistenge</h1>
-          <p className="text-gray-400 mt-1">Bolão Copa 2026</p>
+          <h1 className="text-2xl font-bold text-white">Bolão Copa 2026</h1>
+          <p className="text-gray-400 mt-1">Faça seus palpites</p>
         </div>
 
         <form onSubmit={handleSubmit} className="card space-y-4">

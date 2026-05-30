@@ -43,11 +43,11 @@ export default function Layout({ children }) {
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center font-bold text-lg">
-              S
+              B
             </div>
             <div className="text-left">
-              <h1 className="text-lg font-bold leading-tight">Sistenge</h1>
-              <p className="text-xs text-gray-400">Bolão Copa 2026</p>
+              <h1 className="text-lg font-bold leading-tight">Bolão Copa 2026</h1>
+              <p className="text-xs text-gray-400">Palpites & Ranking</p>
             </div>
           </Link>
           <div className="flex items-center gap-2">
