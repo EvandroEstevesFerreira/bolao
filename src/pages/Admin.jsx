@@ -283,6 +283,8 @@ function AbaPlacar() {
   const [placarCasa, setPlacarCasa] = useState('')
   const [placarFora, setPlacarFora] = useState('')
   const [filtroStatus, setFiltroStatus] = useState('todos')
+  const [sincronizando, setSincronizando] = useState(false)
+  const [syncResult, setSyncResult] = useState(null)
 
   useEffect(() => { carregarDados() }, [])
 
@@ -295,6 +297,22 @@ function AbaPlacar() {
     const map = {}
     sRes.data?.forEach(s => { map[s.id] = s })
     setSelecoes(map)
+  }
+
+  async function sincronizarResultados() {
+    setSincronizando(true)
+    setSyncResult(null)
+    try {
+      const { data, error } = await supabase.functions.invoke('sincronizar-resultados')
+      if (error) throw error
+      setSyncResult({ ok: true, ...data })
+      carregarDados()
+    } catch (err) {
+      setSyncResult({ ok: false, error: err.message || 'Erro ao sincronizar' })
+    } finally {
+      setSincronizando(false)
+      setTimeout(() => setSyncResult(null), 8000)
+    }
   }
 
   async function salvarPlacar(partida) {
@@ -334,6 +352,35 @@ function AbaPlacar() {
 
   return (
     <div className="space-y-3">
+      <div className="card flex items-center justify-between">
+        <div>
+          <h4 className="font-semibold flex items-center gap-2">
+            <RefreshCw size={16} className={sincronizando ? 'animate-spin' : ''} />
+            Sincronizar com API
+          </h4>
+          <p className="text-xs text-gray-500 mt-0.5">Atualiza placares automaticamente via SportAPI7</p>
+        </div>
+        <button
+          onClick={sincronizarResultados}
+          disabled={sincronizando}
+          className="btn-primary flex items-center gap-2 text-sm disabled:opacity-50"
+        >
+          {sincronizando ? 'Sincronizando...' : 'Sincronizar'}
+        </button>
+      </div>
+
+      {syncResult && (
+        <div className={`card text-sm ${syncResult.ok ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'}`}>
+          {syncResult.ok ? (
+            <p className="text-green-700 dark:text-green-300">
+              Sincronizado! {syncResult.totalEventos} eventos processados, {syncResult.atualizados} atualizados, {syncResult.pontosRecalculados} pontos recalculados.
+            </p>
+          ) : (
+            <p className="text-red-700 dark:text-red-300">Erro: {syncResult.error}</p>
+          )}
+        </div>
+      )}
+
       <div className="flex gap-2">
         {['todos', 'agendado', 'ao_vivo', 'encerrado'].map(s => (
           <button
