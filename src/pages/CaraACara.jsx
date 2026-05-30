@@ -18,7 +18,7 @@ export default function CaraACara() {
   async function carregarJogadores() {
     const { data } = await supabase
       .from('perfis')
-      .select('id, nickname, avatar_url, setor_cr')
+      .select('id, nickname, avatar_url')
       .eq('ativo', true)
       .neq('id', perfil.id)
       .order('nickname')
@@ -103,7 +103,7 @@ export default function CaraACara() {
                   </div>
                   <div>
                     <p className="font-semibold text-sm">{j.nickname}</p>
-                    {j.setor_cr && <p className="text-xs text-gray-400">{j.setor_cr}</p>}
+
                   </div>
                 </button>
               ))}

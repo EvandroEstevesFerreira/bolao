@@ -11,7 +11,6 @@ export default function Convite() {
   const [nickname, setNickname] = useState('')
   const [pin, setPin] = useState('')
   const [pinConfirm, setPinConfirm] = useState('')
-  const [setorCr, setSetorCr] = useState('')
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(false)
   const { resgatarConvite } = useAuth()
@@ -42,7 +41,7 @@ export default function Convite() {
         nome: nome.trim(),
         nickname: nickname.trim(),
         pin,
-        setor_cr: setorCr.trim() || null,
+        setor_cr: null,
         avatar_url: null,
       })
       navigate('/')
@@ -112,17 +111,6 @@ export default function Convite() {
               placeholder="Como você quer aparecer no ranking"
               className="input-field"
               maxLength={20}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">CR / Setor</label>
-            <input
-              type="text"
-              value={setorCr}
-              onChange={(e) => setSetorCr(e.target.value)}
-              placeholder="Ex: CR605"
-              className="input-field"
             />
           </div>
 
