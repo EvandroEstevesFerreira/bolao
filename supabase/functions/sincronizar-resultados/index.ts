@@ -1,30 +1,17 @@
-// Edge Function: Sincronizar resultados da API-Football
-// Chamada via pg_cron ou manualmente pelo admin
-// Consulta a API-Football, atualiza partidas e recalcula pontos
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const API_FOOTBALL_KEY = Deno.env.get('API_FOOTBALL_KEY')
+const RAPIDAPI_KEY = Deno.env.get('RAPIDAPI_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-interface Fixture {
-  fixture: { id: number; status: { short: string } }
-  goals: { home: number | null; away: number | null }
-  score: {
-    fulltime: { home: number | null; away: number | null }
-    extratime: { home: number | null; away: number | null }
-    penalty: { home: number | null; away: number | null }
-  }
-}
+const TOURNAMENT_ID = 16
+const SEASON_ID = 58210
 
-function mapStatus(apiStatus: string): string {
-  const aoVivo = ['1H', '2H', 'HT', 'ET', 'BT', 'P', 'LIVE']
-  const encerrado = ['FT', 'AET', 'PEN']
-  if (aoVivo.includes(apiStatus)) return 'ao_vivo'
-  if (encerrado.includes(apiStatus)) return 'encerrado'
+function mapStatus(apiType: string): string {
+  if (apiType === 'inprogress') return 'ao_vivo'
+  if (apiType === 'finished') return 'encerrado'
   return 'agendado'
 }
 
@@ -45,98 +32,148 @@ function calcularPontos(
   return 0
 }
 
+async function fetchRound(round: number) {
+  const url = `https://sportapi7.p.rapidapi.com/api/v1/unique-tournament/${TOURNAMENT_ID}/season/${SEASON_ID}/events/round/${round}`
+  const res = await fetch(url, {
+    headers: {
+      'x-rapidapi-key': RAPIDAPI_KEY!,
+      'x-rapidapi-host': 'sportapi7.p.rapidapi.com',
+    },
+  })
+  if (!res.ok) return []
+  const data = await res.json()
+  return data.events || []
+}
+
+async function mapearPartida(event: any): Promise<number | null> {
+  const { data: partida } = await supabase
+    .from('partidas')
+    .select('id')
+    .eq('api_event_id', event.id)
+    .single()
+
+  if (partida) return partida.id
+
+  const homeId = event.homeTeam?.id
+  const awayId = event.awayTeam?.id
+  if (!homeId || !awayId) return null
+
+  const { data: selCasa } = await supabase
+    .from('selecoes')
+    .select('id')
+    .eq('nome', event.homeTeam.name)
+    .single()
+
+  const { data: selFora } = await supabase
+    .from('selecoes')
+    .select('id')
+    .eq('nome', event.awayTeam.name)
+    .single()
+
+  if (!selCasa || !selFora) return null
+
+  const { data: match } = await supabase
+    .from('partidas')
+    .select('id')
+    .eq('selecao_casa_id', selCasa.id)
+    .eq('selecao_fora_id', selFora.id)
+    .is('api_event_id', null)
+    .single()
+
+  if (match) {
+    await supabase
+      .from('partidas')
+      .update({ api_event_id: event.id })
+      .eq('id', match.id)
+    return match.id
+  }
+
+  return null
+}
+
 Deno.serve(async (req) => {
   try {
-    if (!API_FOOTBALL_KEY) {
-      return new Response(JSON.stringify({ error: 'API_FOOTBALL_KEY não configurada' }), {
+    if (!RAPIDAPI_KEY) {
+      return new Response(JSON.stringify({ error: 'RAPIDAPI_KEY não configurada' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
       })
     }
 
-    // Buscar jogos do dia na API-Football
-    const today = new Date().toISOString().split('T')[0]
-    const apiUrl = `https://v3.football.api-sports.io/fixtures?league=1&season=2026&date=${today}`
-
-    const apiRes = await fetch(apiUrl, {
-      headers: {
-        'x-apisports-key': API_FOOTBALL_KEY,
-      },
-    })
-
-    if (!apiRes.ok) {
-      return new Response(JSON.stringify({ error: 'Erro na API-Football' }), {
-        status: 502,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-
-    const apiData = await apiRes.json()
-    const fixtures: Fixture[] = apiData.response || []
+    const url = new URL(req.url)
+    const roundParam = url.searchParams.get('round')
+    const rounds = roundParam ? [parseInt(roundParam)] : [1, 2, 3]
 
     let atualizados = 0
     let pontosRecalculados = 0
+    let totalEventos = 0
 
-    for (const fix of fixtures) {
-      const fixtureId = fix.fixture.id
-      const status = mapStatus(fix.fixture.status.short)
+    for (const round of rounds) {
+      const events = await fetchRound(round)
+      totalEventos += events.length
 
-      // Placar do tempo regulamentar + prorrogação (sem pênaltis)
-      let placarCasa = fix.score.fulltime.home
-      let placarFora = fix.score.fulltime.away
-      let placarCasaProrrogacao = fix.score.extratime.home
-      let placarForaProrrogacao = fix.score.extratime.away
-      const decidido_penaltis = fix.score.penalty.home !== null
+      for (const event of events) {
+        const status = mapStatus(event.status?.type || 'notstarted')
+        const homeScore = event.homeScore?.current ?? null
+        const awayScore = event.awayScore?.current ?? null
 
-      // Para pontuação: usar fulltime (inclui prorrogação na API-Football)
-      // Se decidido nos pênaltis, o placar antes dos pênaltis é o que vale
-      if (placarCasa === null) {
-        placarCasa = fix.goals.home
-        placarFora = fix.goals.away
-      }
+        if (status === 'agendado' && homeScore === null) continue
 
-      const { data: partidaExistente } = await supabase
-        .from('partidas')
-        .select('id, status')
-        .eq('id', fixtureId)
-        .single()
+        const partidaId = await mapearPartida(event)
+        if (!partidaId) continue
 
-      if (!partidaExistente) continue
+        const homeNormaltime = event.homeScore?.normaltime ?? homeScore
+        const awayNormaltime = event.awayScore?.normaltime ?? awayScore
+        const hasExtratime = event.homeScore?.overtime !== undefined && event.homeScore?.overtime !== null
+        const hasPenalties = event.homeScore?.penalties !== undefined && event.homeScore?.penalties !== null
 
-      const { error: updateError } = await supabase
-        .from('partidas')
-        .update({
-          placar_casa: placarCasa,
-          placar_fora: placarFora,
-          placar_casa_prorrogacao: placarCasaProrrogacao,
-          placar_fora_prorrogacao: placarForaProrrogacao,
-          decidido_penaltis,
+        const updateData: any = {
+          placar_casa: homeNormaltime,
+          placar_fora: awayNormaltime,
           status,
           atualizado_em: new Date().toISOString(),
-        })
-        .eq('id', fixtureId)
+        }
 
-      if (!updateError) atualizados++
+        if (hasExtratime) {
+          updateData.placar_casa_prorrogacao = event.homeScore.overtime
+          updateData.placar_fora_prorrogacao = event.awayScore.overtime
+        }
 
-      // Se jogo encerrou, recalcular pontos
-      if (status === 'encerrado' && partidaExistente.status !== 'encerrado' && placarCasa !== null && placarFora !== null) {
-        const { data: palpites } = await supabase
-          .from('palpites')
-          .select('*')
-          .eq('partida_id', fixtureId)
+        if (hasPenalties) {
+          updateData.decidido_penaltis = true
+        }
 
-        if (palpites) {
-          for (const p of palpites) {
-            const pontos = calcularPontos(placarCasa, placarFora, p.placar_casa, p.placar_fora)
-            await supabase.from('palpites').update({ pontos }).eq('id', p.id)
-            pontosRecalculados++
+        const { data: partidaAtual } = await supabase
+          .from('partidas')
+          .select('status')
+          .eq('id', partidaId)
+          .single()
+
+        const { error: updateError } = await supabase
+          .from('partidas')
+          .update(updateData)
+          .eq('id', partidaId)
+
+        if (!updateError) atualizados++
+
+        if (status === 'encerrado' && partidaAtual?.status !== 'encerrado' && homeNormaltime !== null && awayNormaltime !== null) {
+          const { data: palpites } = await supabase
+            .from('palpites')
+            .select('*')
+            .eq('partida_id', partidaId)
+
+          if (palpites) {
+            for (const p of palpites) {
+              const pontos = calcularPontos(homeNormaltime, awayNormaltime, p.placar_casa, p.placar_fora)
+              await supabase.from('palpites').update({ pontos }).eq('id', p.id)
+              pontosRecalculados++
+            }
+
+            await supabase.from('snapshots_palpites').insert({
+              partida_id: partidaId,
+              conteudo: palpites,
+            })
           }
-
-          // Snapshot antifraude
-          await supabase.from('snapshots_palpites').insert({
-            partida_id: fixtureId,
-            conteudo: palpites,
-          })
         }
       }
     }
@@ -144,10 +181,9 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         ok: true,
-        fixtures: fixtures.length,
+        totalEventos,
         atualizados,
         pontosRecalculados,
-        data: today,
       }),
       { headers: { 'Content-Type': 'application/json' } }
     )
