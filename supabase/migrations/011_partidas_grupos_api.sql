@@ -1,7 +1,4 @@
 -- Atualizar partidas da fase de grupos com api_event_id e horários oficiais do SportAPI7
--- Limpar partidas existentes e reinserir com dados da API
-
-DELETE FROM partidas WHERE fase = 'grupos';
 
 INSERT INTO partidas (id, api_event_id, rodada, fase, grupo, data_hora, selecao_casa_id, selecao_fora_id, status) VALUES
 (1001, 15186710, 'Rodada 1', 'grupos', 'A', '2026-06-11T19:00:00+00:00', 1, 2, 'agendado'),
@@ -75,4 +72,13 @@ INSERT INTO partidas (id, api_event_id, rodada, fase, grupo, data_hora, selecao_
 (1069, 15186696, 'Rodada 3', 'grupos', 'K', '2026-06-27T23:30:00+00:00', 44, 41, 'agendado'),
 (1070, 15186717, 'Rodada 3', 'grupos', 'K', '2026-06-27T23:30:00+00:00', 42, 43, 'agendado'),
 (1071, 15186747, 'Rodada 3', 'grupos', 'J', '2026-06-28T02:00:00+00:00', 38, 39, 'agendado'),
-(1072, 15186734, 'Rodada 3', 'grupos', 'J', '2026-06-28T02:00:00+00:00', 40, 37, 'agendado');
+(1072, 15186734, 'Rodada 3', 'grupos', 'J', '2026-06-28T02:00:00+00:00', 40, 37, 'agendado')
+ON CONFLICT (id) DO UPDATE SET
+  api_event_id = EXCLUDED.api_event_id,
+  rodada = EXCLUDED.rodada,
+  fase = EXCLUDED.fase,
+  grupo = EXCLUDED.grupo,
+  data_hora = EXCLUDED.data_hora,
+  selecao_casa_id = EXCLUDED.selecao_casa_id,
+  selecao_fora_id = EXCLUDED.selecao_fora_id,
+  status = EXCLUDED.status;

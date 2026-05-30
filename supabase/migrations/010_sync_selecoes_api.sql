@@ -1,7 +1,5 @@
 -- Atualizar seleções com dados oficiais da Copa 2026
--- Limpar e reinserir com os grupos corretos do sorteio oficial
-
-DELETE FROM selecoes;
+-- Upsert com os grupos corretos do sorteio oficial
 
 INSERT INTO selecoes (id, nome, codigo_fifa, grupo) VALUES
 -- Grupo A
