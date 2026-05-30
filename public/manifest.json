@@ -1,11 +1,11 @@
 {
-  "name": "Sistenge — Bolão Copa 2026",
-  "short_name": "Sistenge",
-  "description": "Bolão Copa 2026 — Sistenge",
+  "name": "Bolão Copa 2026",
+  "short_name": "Bolão Copa",
+  "description": "Palpites e ranking da Copa do Mundo 2026",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1C1C1C",
-  "theme_color": "#CF2927",
+  "theme_color": "#2563EB",
   "icons": [
     {
       "src": "/icon-192.png",

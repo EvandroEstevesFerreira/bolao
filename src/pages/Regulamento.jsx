@@ -21,7 +21,7 @@ export default function Regulamento() {
         <div className="card prose prose-sm max-w-none">
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">1. Quem pode participar</h3>
           <p className="text-gray-700 dark:text-gray-300">
-            Qualquer colaborador da Sistenge Construções e Comércio Ltda. que receber o convite do organizador e completar o cadastro (CPF + nickname).
+            Qualquer pessoa que receber o convite do organizador e completar o cadastro (CPF + nickname).
           </p>
 
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-6">2. Valor da inscrição</h3>
