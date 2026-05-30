@@ -94,7 +94,7 @@ export default function CaraACara() {
                   onClick={() => compararCom(j)}
                   className="card w-full flex items-center gap-3 py-3 hover:shadow-md transition-shadow text-left"
                 >
-                  <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600">
+                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-sm font-bold text-gray-600 dark:text-gray-200">
                     {j.avatar_url ? (
                       <img src={j.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
                     ) : (

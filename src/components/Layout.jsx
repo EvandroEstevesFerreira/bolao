@@ -46,8 +46,8 @@ export default function Layout({ children }) {
               S
             </div>
             <div className="text-left">
-              <h1 className="text-lg font-bold leading-tight">Bolão Sistenge</h1>
-              <p className="text-xs text-gray-400">Copa do Mundo 2026</p>
+              <h1 className="text-lg font-bold leading-tight">Sistenge</h1>
+              <p className="text-xs text-gray-400">Bolão Copa 2026</p>
             </div>
           </Link>
           <div className="flex items-center gap-2">
