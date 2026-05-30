@@ -47,9 +47,11 @@ export default function Login() {
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <div className="animate-float-in w-20 h-20 bg-gradient-to-br from-primary to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/30">
-            <span className="text-white text-3xl font-bold">B</span>
-          </div>
+          <img
+            src="/favicon.svg"
+            alt="Bolão Copa 2026"
+            className="animate-float-in w-20 h-20 mx-auto mb-4 rounded-2xl shadow-lg shadow-primary/30"
+          />
           <h1 className="animate-fade-up text-2xl font-bold text-white" style={{ animationDelay: '0.2s' }}>
             Bolão Copa 2026
           </h1>
