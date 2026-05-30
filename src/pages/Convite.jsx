@@ -53,106 +53,80 @@ export default function Convite() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#075E54] via-[#128C7E] to-[#00A884] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-[#111B21] flex items-center justify-center p-4 relative">
+      <div className="absolute inset-0 bg-[#075E54]/30" />
+
+      <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-6">
           <img
             src="/favicon.svg"
             alt="Bolão Copa 2026"
-            className="w-16 h-16 mx-auto mb-3 rounded-2xl shadow-lg shadow-primary/30"
+            className="w-16 h-16 mx-auto mb-3 rounded-2xl"
           />
           <h1 className="text-xl font-bold text-white">Resgate seu Convite</h1>
-          <p className="text-gray-400 text-sm mt-1">Preencha seus dados para participar</p>
+          <p className="text-[#8696A0] text-sm mt-1">Preencha seus dados para participar</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="card space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 bg-[#202C33] rounded-2xl p-6 border border-[#2A3942]">
           {!searchParams.get('token') && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Código do convite</label>
+              <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">Código do convite</label>
               <input
                 type="text"
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
                 placeholder="Cole o código do convite"
-                className="input-field"
+                className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">CPF</label>
-            <input
-              type="text"
-              value={cpf}
-              onChange={handleCpfChange}
-              placeholder="000.000.000-00"
-              className="input-field"
-              inputMode="numeric"
-            />
+            <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">CPF</label>
+            <input type="text" value={cpf} onChange={handleCpfChange} placeholder="000.000.000-00"
+              className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+              inputMode="numeric" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome completo</label>
-            <input
-              type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              placeholder="Seu nome"
-              className="input-field"
-            />
+            <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">Nome completo</label>
+            <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Seu nome"
+              className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Apelido (nickname)
-            </label>
-            <input
-              type="text"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
+            <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">Apelido (nickname)</label>
+            <input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)}
               placeholder="Como você quer aparecer no ranking"
-              className="input-field"
-              maxLength={20}
-            />
+              className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+              maxLength={20} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">PIN</label>
-              <input
-                type="password"
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-                placeholder="4+ dígitos"
-                className="input-field"
-                maxLength={6}
-                inputMode="numeric"
-              />
+              <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">PIN</label>
+              <input type="password" value={pin} onChange={(e) => setPin(e.target.value)} placeholder="4+ dígitos"
+                className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                maxLength={6} inputMode="numeric" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Confirmar PIN</label>
-              <input
-                type="password"
-                value={pinConfirm}
-                onChange={(e) => setPinConfirm(e.target.value)}
-                placeholder="Repita"
-                className="input-field"
-                maxLength={6}
-                inputMode="numeric"
-              />
+              <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">Confirmar PIN</label>
+              <input type="password" value={pinConfirm} onChange={(e) => setPinConfirm(e.target.value)} placeholder="Repita"
+                className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                maxLength={6} inputMode="numeric" />
             </div>
           </div>
 
-          {erro && <p className="text-red-500 text-sm text-center">{erro}</p>}
+          {erro && <p className="text-red-400 text-sm text-center">{erro}</p>}
 
           <button type="submit" disabled={carregando} className="btn-primary w-full">
             {carregando ? 'Resgatando...' : 'Resgatar Convite e Entrar'}
           </button>
         </form>
 
-        <p className="text-center text-gray-500 text-sm mt-4">
+        <p className="text-center text-[#8696A0] text-sm mt-4">
           Já tem cadastro?{' '}
-          <a href="/login" className="text-primary hover:underline">Faça login</a>
+          <a href="/login" className="text-primary hover:underline font-medium">Faça login</a>
         </p>
       </div>
     </div>

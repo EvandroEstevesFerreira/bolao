@@ -174,7 +174,7 @@ export default function Tour({ forcarExibicao, onFechar }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-[#202C33] rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-gray-100 dark:border-[#2A3942]">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2 text-xs text-gray-400">
@@ -182,14 +182,14 @@ export default function Tour({ forcarExibicao, onFechar }) {
             </div>
             <button
               onClick={fechar}
-              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600"
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#2A3942] text-gray-400 hover:text-gray-600"
             >
               <X size={18} />
             </button>
           </div>
 
           <div className="text-center mb-5">
-            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 bg-gray-100 dark:bg-gray-700 ${atual.corIcone}`}>
+            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 bg-gray-100 dark:bg-[#2A3942] ${atual.corIcone}`}>
               <Icone size={32} />
             </div>
             <h3 className="text-xl font-bold">{atual.titulo}</h3>
@@ -213,7 +213,7 @@ export default function Tour({ forcarExibicao, onFechar }) {
               <div
                 key={i}
                 className={`h-1.5 rounded-full flex-1 transition-colors ${
-                  i <= passo ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-600'
+                  i <= passo ? 'bg-primary' : 'bg-gray-200 dark:bg-[#3B4A54]'
                 }`}
               />
             ))}
@@ -223,7 +223,7 @@ export default function Tour({ forcarExibicao, onFechar }) {
             <button
               onClick={anterior}
               disabled={passo === 0}
-              className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 dark:hover:bg-[#2A3942] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft size={16} />
               Anterior

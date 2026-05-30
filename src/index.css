@@ -5,6 +5,9 @@
   --color-primary-dark: #008069;
   --color-dark: #111B21;
   --color-dark-light: #202C33;
+  --color-dark-card: #1A2329;
+  --color-dark-border: #2A3942;
+  --color-dark-input: #2A3942;
   --color-gold: #FBBF24;
   --color-silver: #94A3B8;
   --color-bronze: #D97706;
@@ -22,69 +25,53 @@
     margin: 0;
   }
 
-  .dark body,
   html.dark body {
     background: #111B21;
-    @apply text-gray-100;
+    color: #E9EDEF;
   }
 
-  .dark h3 {
-    @apply text-gray-100;
-  }
-
-  .dark p {
-    @apply text-gray-300;
-  }
-
-  .dark th {
-    @apply text-gray-200;
-  }
-
-  .dark td {
-    @apply text-gray-300;
-  }
-
-  .dark li {
-    @apply text-gray-300;
-  }
-
-  .dark label {
-    @apply text-gray-300;
-  }
-
-  .dark tr {
-    @apply border-gray-700;
-  }
+  html.dark h3 { color: #E9EDEF; }
+  html.dark p { color: #D1D7DB; }
+  html.dark th { color: #E9EDEF; }
+  html.dark td { color: #D1D7DB; }
+  html.dark li { color: #D1D7DB; }
+  html.dark label { color: #D1D7DB; }
+  html.dark tr { border-color: #2A3942; }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-white px-6 py-3 rounded-lg font-semibold
-           hover:bg-primary-dark transition-colors duration-200
+    @apply bg-primary text-white px-6 py-3 rounded-xl font-semibold
+           hover:bg-primary-dark active:scale-[0.97] transition-all duration-200
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-semibold
-           hover:bg-gray-300 transition-colors duration-200;
+    @apply bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-semibold
+           hover:bg-gray-200 active:scale-[0.97] transition-all duration-200;
   }
 
   .dark .btn-secondary {
-    @apply bg-gray-700 text-gray-200 hover:bg-gray-600;
+    background: #2A3942;
+    color: #D1D7DB;
+  }
+  .dark .btn-secondary:hover {
+    background: #3B4A54;
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+    @apply bg-white rounded-2xl border border-gray-100 p-5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
 
   .dark .card {
     background: #202C33;
     border-color: #2A3942;
-    @apply text-gray-100;
+    color: #E9EDEF;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 rounded-lg border border-gray-300
+    @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white
            focus:border-primary focus:ring-2 focus:ring-primary/20
            outline-none transition-all duration-200;
   }
@@ -92,19 +79,45 @@
   .dark .input-field {
     background: #2A3942;
     border-color: #3B4A54;
-    @apply text-gray-100 placeholder-gray-500;
+    color: #E9EDEF;
+  }
+  .dark .input-field::placeholder {
+    color: #8696A0;
   }
 
   .score-input {
-    @apply w-16 h-14 text-center text-2xl font-bold rounded-lg border-2
-           border-gray-300 focus:border-primary focus:ring-2
+    @apply w-16 h-14 text-center text-2xl font-bold rounded-xl border-2
+           border-gray-200 bg-white focus:border-primary focus:ring-2
            focus:ring-primary/20 outline-none transition-all;
   }
 
   .dark .score-input {
     background: #2A3942;
     border-color: #3B4A54;
-    @apply text-gray-100;
+    color: #E9EDEF;
+  }
+
+  .chip {
+    @apply px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap
+           transition-all duration-200 active:scale-95;
+  }
+
+  .chip-active {
+    @apply bg-primary text-white shadow-md;
+    box-shadow: 0 2px 8px rgba(0, 168, 132, 0.3);
+  }
+
+  .chip-inactive {
+    @apply bg-white text-gray-600 hover:bg-gray-50 border border-gray-200;
+  }
+
+  .dark .chip-inactive {
+    background: #2A3942;
+    border-color: #3B4A54;
+    color: #D1D7DB;
+  }
+  .dark .chip-inactive:hover {
+    background: #3B4A54;
   }
 
   .animate-float-in {
@@ -144,7 +157,7 @@
     position: absolute;
     border-radius: 50%;
     filter: blur(80px);
-    opacity: 0.15;
+    opacity: 0.12;
     animation: orbFloat 8s ease-in-out infinite;
   }
 }

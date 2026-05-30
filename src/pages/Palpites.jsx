@@ -119,11 +119,7 @@ export default function Palpites() {
             <button
               key={fase.value}
               onClick={() => { setFaseAtiva(fase.value); setGrupoAtivo(null) }}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                faseAtiva === fase.value
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
+              className={`chip ${faseAtiva === fase.value ? 'chip-active' : 'chip-inactive'}`}
             >
               {fase.label}
             </button>
@@ -134,9 +130,7 @@ export default function Palpites() {
           <div className="flex gap-1.5 overflow-x-auto pb-2">
             <button
               onClick={() => setGrupoAtivo(null)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                !grupoAtivo ? 'bg-dark text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
+              className={`chip text-xs py-1.5 px-3 ${!grupoAtivo ? 'chip-active' : 'chip-inactive'}`}
             >
               Todos
             </button>
@@ -144,9 +138,7 @@ export default function Palpites() {
               <button
                 key={g}
                 onClick={() => setGrupoAtivo(g)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                  grupoAtivo === g ? 'bg-dark text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
+                className={`chip text-xs py-1.5 px-3 ${grupoAtivo === g ? 'chip-active' : 'chip-inactive'}`}
               >
                 {g}
               </button>

@@ -94,7 +94,7 @@ export default function CaraACara() {
                   onClick={() => compararCom(j)}
                   className="card w-full flex items-center gap-3 py-3 hover:shadow-md transition-shadow text-left"
                 >
-                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-sm font-bold text-gray-600 dark:text-gray-200">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-[#2A3942] flex items-center justify-center text-sm font-bold text-gray-600 dark:text-[#D1D7DB]">
                     {j.avatar_url ? (
                       <img src={j.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
                     ) : (
@@ -170,7 +170,7 @@ export default function CaraACara() {
                   opo={comparacao.opoVitorias}
                 />
 
-                <div className="text-center pt-3 border-t border-gray-100">
+                <div className="text-center pt-3 border-t border-gray-100 dark:border-[#2A3942]">
                   <p className="text-sm text-gray-500">
                     {comparacao.jogosComuns} jogos comparados · {comparacao.empates} empates
                   </p>

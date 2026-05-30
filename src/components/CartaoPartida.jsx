@@ -40,8 +40,8 @@ export default function CartaoPartida({ partida, palpite, onSalvarPalpite, selec
   return (
     <div
       className={`card transition-all ${
-        aoVivo ? 'border-green-400 border-2 shadow-lg shadow-green-500/10 dark:shadow-green-500/5' :
-        encerrado ? 'bg-gray-50 dark:bg-white/[0.03]' : 'hover:shadow-md'
+        aoVivo ? 'border-[#25D366] border-2 shadow-lg shadow-[#25D366]/10' :
+        encerrado ? 'bg-gray-50 dark:bg-[#1A2329]' : 'hover:border-primary/20'
       }`}
     >
       <div className="flex items-center justify-between mb-3">
@@ -138,7 +138,7 @@ export default function CartaoPartida({ partida, palpite, onSalvarPalpite, selec
       )}
 
       {palpite && (encerrado || travado) && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-gray-100 dark:border-[#2A3942]">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">
               Seu palpite: {palpite.placar_casa} × {palpite.placar_fora}

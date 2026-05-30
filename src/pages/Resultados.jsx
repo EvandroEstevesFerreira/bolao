@@ -79,9 +79,7 @@ export default function Resultados() {
             <button
               key={f.v}
               onClick={() => setFiltro(f.v)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                filtro === f.v ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-              }`}
+              className={`chip ${filtro === f.v ? 'chip-active' : 'chip-inactive'}`}
             >
               {f.l}
             </button>
@@ -126,7 +124,7 @@ function CartaoResultado({ partida, selecoes }) {
           </span>
         )}
         {encerrado && (
-          <span className="bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full text-xs dark:bg-gray-700 dark:text-gray-400">
+          <span className="bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full text-xs dark:bg-[#2A3942] dark:text-[#8696A0]">
             Encerrado
           </span>
         )}
