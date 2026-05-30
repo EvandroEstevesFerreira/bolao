@@ -68,71 +68,72 @@ export default function Home() {
   return (
     <Layout>
       <Tour />
-      <div className="space-y-6">
-        <div className="card border-0 bg-gradient-to-br from-[#075E54] via-[#128C7E] to-[#00A884] text-white">
-          <div className="flex items-center justify-between">
+      <div className="space-y-5">
+        <div className="card border-0 bg-[#075E54] dark:bg-[#1A2E28] text-white p-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="relative flex items-center justify-between">
             <div>
-              <p className="text-white/70 text-sm">Olá,</p>
-              <h2 className="text-2xl font-bold">{perfil.nickname}</h2>
+              <p className="text-white/60 text-sm">Olá,</p>
+              <h2 className="text-2xl font-bold tracking-tight">{perfil.nickname}</h2>
             </div>
             {ranking && (
               <div className="text-right">
-                <p className="text-white/70 text-sm">Posição</p>
-                <p className="text-4xl font-black">#{ranking}</p>
+                <p className="text-white/60 text-sm">Posição</p>
+                <p className="text-4xl font-black tabular-nums">#{ranking}</p>
               </div>
             )}
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-3">
-          <div className="card border-0 bg-gradient-to-br from-emerald-500 to-teal-600 text-white text-center">
-            <TrendingUp className="mx-auto mb-1 opacity-80" size={24} />
-            <p className="text-2xl font-bold">{stats.totalPontos}</p>
-            <p className="text-xs text-white/70">Pontos</p>
+          <div className="card border-0 bg-[#00A884] text-white text-center p-4">
+            <TrendingUp className="mx-auto mb-1.5 opacity-70" size={22} />
+            <p className="text-2xl font-bold tabular-nums">{stats.totalPontos}</p>
+            <p className="text-[11px] text-white/60 mt-0.5">Pontos</p>
           </div>
-          <div className="card border-0 bg-gradient-to-br from-amber-500 to-orange-600 text-white text-center">
-            <ClipboardList className="mx-auto mb-1 opacity-80" size={24} />
-            <p className="text-2xl font-bold">{stats.totalPalpites}</p>
-            <p className="text-xs text-white/70">Palpites</p>
+          <div className="card border-0 bg-[#075E54] text-white text-center p-4">
+            <ClipboardList className="mx-auto mb-1.5 opacity-70" size={22} />
+            <p className="text-2xl font-bold tabular-nums">{stats.totalPalpites}</p>
+            <p className="text-[11px] text-white/60 mt-0.5">Palpites</p>
           </div>
-          <div className="card border-0 bg-gradient-to-br from-[#128C7E] to-[#075E54] text-white text-center">
-            <Calendar className="mx-auto mb-1 opacity-80" size={24} />
-            <p className="text-2xl font-bold">{stats.totalJogos}</p>
-            <p className="text-xs text-white/70">Jogos</p>
+          <div className="card border-0 bg-[#128C7E] text-white text-center p-4">
+            <Calendar className="mx-auto mb-1.5 opacity-70" size={22} />
+            <p className="text-2xl font-bold tabular-nums">{stats.totalJogos}</p>
+            <p className="text-[11px] text-white/60 mt-0.5">Jogos</p>
           </div>
         </div>
 
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-lg">Próximos Jogos</h3>
+            <h3 className="font-bold text-base">Próximos Jogos</h3>
             <Link to="/palpites" className="text-primary text-sm font-semibold hover:underline">
               Ver todos
             </Link>
           </div>
 
           {proximosJogos.length === 0 ? (
-            <div className="card text-center text-gray-500">
-              <p>Nenhum jogo agendado.</p>
-              <p className="text-sm mt-1">A Copa começa em 11/06/2026!</p>
+            <div className="card text-center py-8">
+              <p className="text-gray-400">Nenhum jogo agendado.</p>
+              <p className="text-sm text-gray-400 mt-1">A Copa começa em 11/06/2026!</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {proximosJogos.map(jogo => (
-                <Link key={jogo.id} to="/palpites" className="card flex items-center justify-between hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-2">
+                <Link key={jogo.id} to="/palpites" className="card flex items-center justify-between py-4 hover:border-primary/30 transition-colors">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
                     {selecoes[jogo.selecao_casa_id]?.bandeira_url && (
                       <img src={selecoes[jogo.selecao_casa_id].bandeira_url} alt="" className="w-6 h-4 rounded" />
                     )}
-                    <span className="font-semibold text-sm">
+                    <span className="font-bold text-sm">
                       {selecoes[jogo.selecao_casa_id]?.codigo_fifa || '?'}
                     </span>
                   </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500">{formatarDataHora(jogo.data_hora)}</p>
-                    <p className="text-xs text-gray-400">{jogo.grupo ? `Grupo ${jogo.grupo}` : jogo.fase}</p>
+                  <div className="text-center px-3">
+                    <p className="text-xs text-gray-500 dark:text-[#8696A0]">{formatarDataHora(jogo.data_hora)}</p>
+                    <p className="text-[11px] text-gray-400 dark:text-[#8696A0]/70">{jogo.grupo ? `Grupo ${jogo.grupo}` : jogo.fase}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm">
+                  <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
+                    <span className="font-bold text-sm">
                       {selecoes[jogo.selecao_fora_id]?.codigo_fifa || '?'}
                     </span>
                     {selecoes[jogo.selecao_fora_id]?.bandeira_url && (
@@ -145,39 +146,28 @@ export default function Home() {
           )}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Link to="/destaques" className="card text-center hover:scale-105 transition-transform duration-200">
-            <div className="w-10 h-10 rounded-xl bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center mx-auto mb-2">
-              <Star className="text-yellow-500" size={20} />
-            </div>
-            <p className="text-xs font-semibold">Destaques</p>
-          </Link>
-          <Link to="/conquistas" className="card text-center hover:scale-105 transition-transform duration-200">
-            <div className="w-10 h-10 rounded-xl bg-[#00A884]/10 dark:bg-[#00A884]/20 flex items-center justify-center mx-auto mb-2">
-              <Award className="text-[#00A884]" size={20} />
-            </div>
-            <p className="text-xs font-semibold">Conquistas</p>
-          </Link>
-          <Link to="/cara-a-cara" className="card text-center hover:scale-105 transition-transform duration-200">
-            <div className="w-10 h-10 rounded-xl bg-[#128C7E]/10 dark:bg-[#128C7E]/20 flex items-center justify-center mx-auto mb-2">
-              <Swords className="text-[#128C7E]" size={20} />
-            </div>
-            <p className="text-xs font-semibold">Cara a Cara</p>
-          </Link>
-          <Link to="/bonus" className="card text-center hover:scale-105 transition-transform duration-200">
-            <div className="w-10 h-10 rounded-xl bg-[#075E54]/10 dark:bg-[#075E54]/20 flex items-center justify-center mx-auto mb-2">
-              <Trophy className="text-[#075E54] dark:text-[#00A884]" size={20} />
-            </div>
-            <p className="text-xs font-semibold">Palpite Bônus</p>
-          </Link>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          {[
+            { to: '/destaques', icon: Star, label: 'Destaques', color: 'text-yellow-500', bg: 'bg-yellow-500/10 dark:bg-yellow-500/15' },
+            { to: '/conquistas', icon: Award, label: 'Conquistas', color: 'text-primary', bg: 'bg-primary/10 dark:bg-primary/15' },
+            { to: '/cara-a-cara', icon: Swords, label: 'Cara a Cara', color: 'text-[#128C7E]', bg: 'bg-[#128C7E]/10 dark:bg-[#128C7E]/15' },
+            { to: '/bonus', icon: Trophy, label: 'Palpite Bônus', color: 'text-amber-500', bg: 'bg-amber-500/10 dark:bg-amber-500/15' },
+          ].map(({ to, icon: Icon, label, color, bg }) => (
+            <Link key={to} to={to} className="card text-center py-4 hover:border-primary/20 active:scale-[0.97] transition-all">
+              <div className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center mx-auto mb-2`}>
+                <Icon className={color} size={20} />
+              </div>
+              <p className="text-xs font-semibold">{label}</p>
+            </Link>
+          ))}
         </div>
 
         <Link
           to="/regulamento"
-          className="block card border-0 bg-gradient-to-r from-primary/10 to-[#25D366]/10 dark:from-primary/20 dark:to-[#25D366]/20 text-center text-primary font-semibold hover:scale-[1.02] transition-transform duration-200"
+          className="block card border-primary/20 bg-primary/5 dark:bg-primary/10 text-center text-primary font-semibold py-4 hover:bg-primary/10 dark:hover:bg-primary/15 active:scale-[0.98] transition-all"
         >
-          <Trophy className="mx-auto mb-1" size={20} />
-          Ver Regulamento
+          <Trophy className="mx-auto mb-1" size={18} />
+          <span className="text-sm">Ver Regulamento</span>
         </Link>
       </div>
     </Layout>

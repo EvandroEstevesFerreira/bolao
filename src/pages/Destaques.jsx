@@ -140,7 +140,7 @@ export default function Destaques() {
               <CardDestaque
                 titulo="Lanterna"
                 icon={TrendingDown}
-                cor="text-gray-400 bg-gray-50"
+                cor="text-gray-400 bg-gray-100 dark:bg-[#2A3942]"
                 nickname={destaques.lanterna.nickname}
                 detalhe={`${destaques.lanterna.pontos} pontos`}
               />

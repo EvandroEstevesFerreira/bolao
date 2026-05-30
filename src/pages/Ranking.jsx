@@ -130,9 +130,7 @@ export default function Ranking() {
         <div className="flex gap-2 overflow-x-auto pb-2">
           <button
             onClick={() => setFiltro('geral')}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              filtro === 'geral' ? 'bg-primary text-white shadow-md shadow-primary/25' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-            }`}
+            className={`chip ${filtro === 'geral' ? 'chip-active' : 'chip-inactive'}`}
           >
             Geral
           </button>
@@ -140,9 +138,7 @@ export default function Ranking() {
             <button
               key={setor}
               onClick={() => setFiltro(setor)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                filtro === setor ? 'bg-primary text-white shadow-md shadow-primary/25' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
+              className={`chip ${filtro === setor ? 'chip-active' : 'chip-inactive'}`}
             >
               {setor}
             </button>
@@ -166,7 +162,7 @@ export default function Ranking() {
                   key={item.perfil.id}
                   className={`card flex items-center gap-3 py-3 ${
                     isMe ? 'ring-2 ring-primary bg-primary/5 dark:bg-primary/10' : ''
-                  } ${idx === 0 ? 'shadow-md bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-500/10 dark:to-amber-500/10' : idx === 1 ? 'shadow-md bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-500/10 dark:to-slate-500/10' : idx === 2 ? 'shadow-md bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-500/10 dark:to-amber-500/10' : ''}`}
+                  } ${idx === 0 ? 'border-yellow-200 dark:border-yellow-500/20 bg-yellow-50/50 dark:bg-yellow-500/5' : idx === 1 ? 'border-gray-200 dark:border-gray-500/20 bg-gray-50/50 dark:bg-gray-500/5' : idx === 2 ? 'border-amber-200 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/5' : ''}`}
                 >
                   <div className="w-8 flex justify-center">
                     {getMedalha(idx)}
