@@ -1,29 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #6366F1;
-  --color-primary-dark: #4F46E5;
-  --color-dark: #0F0E17;
-  --color-dark-light: #1A1932;
+  --color-primary: #00A884;
+  --color-primary-dark: #008069;
+  --color-dark: #111B21;
+  --color-dark-light: #202C33;
   --color-gold: #FBBF24;
   --color-silver: #94A3B8;
   --color-bronze: #D97706;
-  --color-accent: #06B6D4;
-  --color-success: #10B981;
+  --color-accent: #25D366;
+  --color-success: #25D366;
   --color-warning: #F59E0B;
   --color-danger: #EF4444;
 }
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply text-gray-900 antialiased;
+    background: #F0F2F5;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     margin: 0;
   }
 
   .dark body,
   html.dark body {
-    background: #0F0E17;
+    background: #111B21;
     @apply text-gray-100;
   }
 
@@ -77,8 +78,8 @@
   }
 
   .dark .card {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.08);
+    background: #202C33;
+    border-color: #2A3942;
     @apply text-gray-100;
   }
 
@@ -89,8 +90,8 @@
   }
 
   .dark .input-field {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: #2A3942;
+    border-color: #3B4A54;
     @apply text-gray-100 placeholder-gray-500;
   }
 
@@ -101,8 +102,8 @@
   }
 
   .dark .score-input {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: #2A3942;
+    border-color: #3B4A54;
     @apply text-gray-100;
   }
 

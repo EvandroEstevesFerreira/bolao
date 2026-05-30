@@ -6,7 +6,7 @@ import Layout from '../components/Layout'
 
 const BADGES = {
   cravada: { label: 'Cravada', desc: 'Acertou o placar exato', icon: Target, cor: 'text-yellow-500 bg-yellow-50' },
-  vidente: { label: 'Vidente', desc: '3 cravadas no torneio', icon: Eye, cor: 'text-purple-500 bg-purple-50' },
+  vidente: { label: 'Vidente', desc: '3 cravadas no torneio', icon: Eye, cor: 'text-teal-600 bg-teal-50' },
   pe_quente: { label: 'Pé Quente', desc: '5 vencedores seguidos', icon: Flame, cor: 'text-orange-500 bg-orange-50' },
   rodada_perfeita: { label: 'Rodada Perfeita', desc: 'Acertou todos da rodada', icon: Star, cor: 'text-green-500 bg-green-50' },
   zebra: { label: 'Zebra', desc: 'Acertou um resultado improvável', icon: Zap, cor: 'text-blue-500 bg-blue-50' },

@@ -44,7 +44,7 @@ const PASSOS = [
   {
     titulo: 'Palpite Bônus',
     icone: Award,
-    corIcone: 'text-purple-500',
+    corIcone: 'text-primary',
     rota: '/bonus',
     descricao: 'Antes da Copa começar, você escolhe quem será o campeão e o vice. Se acertar o campeão, ganha +20 pontos. Se acertar o vice, ganha +10 pontos.',
     exemplo: 'Exemplo: se você escolheu Brasil como campeão e Argentina como vice, e o resultado final for Brasil campeão e França vice, você ganha +20 pontos pelo campeão.',
@@ -71,7 +71,7 @@ const PASSOS = [
   {
     titulo: 'Cara a Cara',
     icone: Swords,
-    corIcone: 'text-indigo-500',
+    corIcone: 'text-primary',
     rota: '/cara-a-cara',
     descricao: 'Compare seu desempenho diretamente com qualquer outro participante. Veja quem tem mais pontos, mais cravadas e mais acertos em um confronto direto.',
     exemplo: 'Exemplo: você vs. João — Pontos: 95x87. Cravadas: 3x1. Acertos de vencedor: 15x12. Um raio-X completo do duelo!',

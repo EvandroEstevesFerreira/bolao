@@ -53,7 +53,7 @@ export default function Convite() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-light to-indigo-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#075E54] via-[#128C7E] to-[#00A884] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <img

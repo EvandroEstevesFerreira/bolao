@@ -40,7 +40,7 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen flex flex-col dark:bg-gray-900 dark:text-gray-100">
-      <header className="bg-gradient-to-r from-dark to-dark-light text-white shadow-lg">
+      <header className="bg-[#075E54] dark:bg-[#1F2C34] text-white shadow-lg">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <img src="/favicon.svg" alt="" className="w-10 h-10 rounded-xl shadow-lg shadow-primary/25" />
@@ -128,7 +128,7 @@ export default function Layout({ children }) {
         {children}
       </main>
 
-      <nav className="bg-white dark:bg-[#1A1932] border-t border-gray-200 dark:border-white/5 sticky bottom-0 z-50">
+      <nav className="bg-white dark:bg-[#202C33] border-t border-gray-200 dark:border-[#2A3942] sticky bottom-0 z-50">
         <div className="max-w-5xl mx-auto flex">
           {navItems.map(({ path, label, icon: Icon }) => {
             const isActive = location.pathname === path
@@ -152,7 +152,7 @@ export default function Layout({ children }) {
         </div>
       </nav>
 
-      <footer className="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-3 px-4 text-center text-xs text-gray-500 dark:text-gray-400">
+      <footer className="bg-gray-100 dark:bg-[#1A2228] border-t border-gray-200 dark:border-[#2A3942] py-3 px-4 text-center text-xs text-gray-500 dark:text-gray-400">
         Este sistema é ferramenta de acompanhamento e cálculo. A entrega de qualquer prêmio é responsabilidade do organizador/grupo.
       </footer>
     </div>
