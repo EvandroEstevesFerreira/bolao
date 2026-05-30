@@ -40,10 +40,10 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen flex flex-col dark:bg-gray-900 dark:text-gray-100">
-      <header className="bg-dark text-white shadow-lg">
+      <header className="bg-gradient-to-r from-dark to-dark-light text-white shadow-lg">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center font-bold text-lg">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-purple-500 rounded-xl flex items-center justify-center font-bold text-lg shadow-lg shadow-primary/25">
               B
             </div>
             <div className="text-left">
@@ -130,7 +130,7 @@ export default function Layout({ children }) {
         {children}
       </main>
 
-      <nav className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 sticky bottom-0 z-50">
+      <nav className="bg-white dark:bg-[#1A1932] border-t border-gray-200 dark:border-white/5 sticky bottom-0 z-50">
         <div className="max-w-5xl mx-auto flex">
           {navItems.map(({ path, label, icon: Icon }) => {
             const isActive = location.pathname === path
@@ -138,14 +138,16 @@ export default function Layout({ children }) {
               <Link
                 key={path}
                 to={path}
-                className={`flex-1 flex flex-col items-center py-2 text-xs transition-colors ${
+                className={`flex-1 flex flex-col items-center py-2 text-xs transition-all duration-200 ${
                   isActive
                     ? 'text-primary font-semibold'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                    : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
-                <Icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                <span className="mt-1">{label}</span>
+                <div className={`p-1.5 rounded-xl transition-all duration-200 ${isActive ? 'bg-primary/10 dark:bg-primary/20' : ''}`}>
+                  <Icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
+                </div>
+                <span className="mt-0.5">{label}</span>
               </Link>
             )
           })}

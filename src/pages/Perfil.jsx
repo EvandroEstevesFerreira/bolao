@@ -36,7 +36,7 @@ export default function Perfil() {
         <h2 className="text-xl font-bold">Meu Perfil</h2>
 
         <div className="card text-center">
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 dark:from-primary/30 dark:to-purple-500/30 flex items-center justify-center mx-auto mb-3 ring-4 ring-primary/10">
             {perfil.avatar_url ? (
               <img src={perfil.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
             ) : (

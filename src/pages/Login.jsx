@@ -40,14 +40,14 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-dark flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-light to-indigo-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-20 h-20 bg-gradient-to-br from-primary to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/30">
             <span className="text-white text-3xl font-bold">B</span>
           </div>
           <h1 className="text-2xl font-bold text-white">Bolão Copa 2026</h1>
-          <p className="text-gray-400 mt-1">Faça seus palpites</p>
+          <p className="text-gray-400 mt-1">Faça seus palpites e dispute com seus amigos!</p>
         </div>
 
         <form onSubmit={handleSubmit} className="card space-y-4">

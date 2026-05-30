@@ -53,10 +53,10 @@ export default function Convite() {
   }
 
   return (
-    <div className="min-h-screen bg-dark flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-light to-indigo-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-3">
+          <div className="w-16 h-16 bg-gradient-to-br from-primary to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-primary/30">
             <span className="text-white text-2xl font-bold">B</span>
           </div>
           <h1 className="text-xl font-bold text-white">Resgate seu Convite</h1>
