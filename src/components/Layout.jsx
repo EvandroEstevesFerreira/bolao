@@ -43,9 +43,7 @@ export default function Layout({ children }) {
       <header className="bg-gradient-to-r from-dark to-dark-light text-white shadow-lg">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-purple-500 rounded-xl flex items-center justify-center font-bold text-lg shadow-lg shadow-primary/25">
-              B
-            </div>
+            <img src="/favicon.svg" alt="" className="w-10 h-10 rounded-xl shadow-lg shadow-primary/25" />
             <div className="text-left">
               <h1 className="text-lg font-bold leading-tight">Bolão Copa 2026</h1>
               <p className="text-xs text-gray-400">Palpites & Ranking</p>
