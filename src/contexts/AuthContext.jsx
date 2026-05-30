@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { hashPin, verificarPin } from '../lib/hash'
 
 const AuthContext = createContext(null)
 
@@ -31,16 +32,27 @@ export function AuthProvider({ children }) {
       throw new Error('CPF não encontrado ou acesso desativado.')
     }
 
-    if (data.pin_hash && data.pin_hash !== pin) {
-      throw new Error('PIN incorreto.')
+    if (data.pin_hash) {
+      const isHash = data.pin_hash.length === 64 && /^[0-9a-f]+$/.test(data.pin_hash)
+
+      if (isHash) {
+        const ok = await verificarPin(pin, data.pin_hash)
+        if (!ok) throw new Error('PIN incorreto.')
+      } else {
+        if (data.pin_hash !== pin) throw new Error('PIN incorreto.')
+        const novoHash = await hashPin(pin)
+        await supabase.from('perfis').update({ pin_hash: novoHash }).eq('id', data.id)
+      }
     }
 
-    localStorage.setItem('bolao_perfil', JSON.stringify(data))
-    setPerfil(data)
-    return data
+    const { pin_hash: _, ...perfilSeguro } = data
+    localStorage.setItem('bolao_perfil', JSON.stringify(perfilSeguro))
+    setPerfil(perfilSeguro)
+    return perfilSeguro
   }
 
-  async function resgatarConvite(token, dadosPerfil) {
+  async function resgatarConvite(token, dadosOriginal) {
+    const dadosPerfil = { ...dadosOriginal, pin: await hashPin(dadosOriginal.pin) }
     const { data: convite, error: errConvite } = await supabase
       .from('convites')
       .select('*')
@@ -115,9 +127,10 @@ export function AuthProvider({ children }) {
       })
     }
 
-    localStorage.setItem('bolao_perfil', JSON.stringify(perfilFinal))
-    setPerfil(perfilFinal)
-    return perfilFinal
+    const { pin_hash: _, ...perfilSeguro } = perfilFinal
+    localStorage.setItem('bolao_perfil', JSON.stringify(perfilSeguro))
+    setPerfil(perfilSeguro)
+    return perfilSeguro
   }
 
   function logout() {
