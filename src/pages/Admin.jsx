@@ -155,7 +155,6 @@ function AbaUsuarios() {
                 <tr className="border-b-2 border-gray-200 text-left">
                   <th className="py-2">Nome</th>
                   <th className="py-2">Nickname</th>
-                  <th className="py-2">CR</th>
                   <th className="py-2 text-center">Ativo</th>
                   <th className="py-2 text-center">Admin</th>
                 </tr>
@@ -165,7 +164,6 @@ function AbaUsuarios() {
                   <tr key={u.id} className="border-b border-gray-100">
                     <td className="py-2">{u.nome}</td>
                     <td className="py-2 text-gray-500">{u.nickname || '—'}</td>
-                    <td className="py-2 text-gray-500">{u.setor_cr || '—'}</td>
                     <td className="py-2 text-center">
                       <button
                         onClick={() => toggleAtivo(u)}
@@ -548,7 +546,7 @@ function AbaDashboard() {
   async function carregarStats() {
     setCarregando(true)
     const [perfisRes, palpitesRes, partidasRes, bpRes] = await Promise.all([
-      supabase.from('perfis').select('id, ativo, setor_cr'),
+      supabase.from('perfis').select('id, ativo'),
       supabase.from('palpites').select('usuario_id, partida_id'),
       supabase.from('partidas').select('id, status'),
       supabase.from('bolao_participantes').select('pago'),
@@ -562,13 +560,6 @@ function AbaDashboard() {
     const ativos = perfis.filter(p => p.ativo).length
     const encerrados = partidas.filter(p => p.status === 'encerrado').length
     const pagos = bp.filter(p => p.pago).length
-
-    const porCR = {}
-    perfis.forEach(p => {
-      if (p.setor_cr) {
-        porCR[p.setor_cr] = (porCR[p.setor_cr] || 0) + 1
-      }
-    })
 
     const palpitanteUnicos = new Set(palpites.map(p => p.usuario_id)).size
     const palpitesPorJogo = {}
@@ -584,7 +575,6 @@ function AbaDashboard() {
       pagos,
       totalBP: bp.length,
       palpitanteUnicos,
-      porCR,
       mediaPalpitesPorJogo: encerrados > 0
         ? Math.round(Object.values(palpitesPorJogo).reduce((a, b) => a + b, 0) / Math.max(Object.keys(palpitesPorJogo).length, 1))
         : 0,
@@ -634,20 +624,6 @@ function AbaDashboard() {
         </div>
         <p className="text-xs text-gray-500 mt-1">jogos encerrados</p>
       </div>
-
-      {Object.keys(stats.porCR).length > 0 && (
-        <div className="card">
-          <h4 className="font-semibold mb-3">Participantes por CR/Setor</h4>
-          <div className="space-y-2">
-            {Object.entries(stats.porCR).sort((a, b) => b[1] - a[1]).map(([cr, count]) => (
-              <div key={cr} className="flex items-center justify-between text-sm">
-                <span className="font-medium">{cr}</span>
-                <span className="bg-gray-100 px-2 py-0.5 rounded text-gray-600">{count}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="card">
         <p className="text-sm text-gray-500">

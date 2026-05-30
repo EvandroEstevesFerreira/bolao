@@ -7,7 +7,6 @@ export default function Perfil() {
   const { perfil, atualizarPerfil } = useAuth()
   const [editando, setEditando] = useState(false)
   const [nickname, setNickname] = useState(perfil.nickname || '')
-  const [setorCr, setSetorCr] = useState(perfil.setor_cr || '')
   const [salvando, setSalvando] = useState(false)
   const [mensagem, setMensagem] = useState('')
 
@@ -20,7 +19,6 @@ export default function Perfil() {
     try {
       await atualizarPerfil({
         nickname: nickname.trim(),
-        setor_cr: setorCr.trim() || null,
       })
       setEditando(false)
       setMensagem('Perfil atualizado!')
@@ -58,15 +56,6 @@ export default function Perfil() {
                   maxLength={20}
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 text-left">CR / Setor</label>
-                <input
-                  type="text"
-                  value={setorCr}
-                  onChange={(e) => setSetorCr(e.target.value)}
-                  className="input-field"
-                />
-              </div>
               <div className="flex gap-2">
                 <button onClick={handleSalvar} disabled={salvando} className="btn-primary flex-1 flex items-center justify-center gap-2">
                   <Save size={16} />
@@ -81,11 +70,6 @@ export default function Perfil() {
             <>
               <h3 className="text-xl font-bold">{perfil.nickname}</h3>
               <p className="text-gray-500 text-sm">{perfil.nome}</p>
-              {perfil.setor_cr && (
-                <span className="inline-block mt-1 px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs text-gray-600 dark:text-gray-300">
-                  {perfil.setor_cr}
-                </span>
-              )}
               <button
                 onClick={() => setEditando(true)}
                 className="mt-4 text-primary text-sm font-semibold flex items-center justify-center gap-1 mx-auto hover:underline"
@@ -114,13 +98,7 @@ export default function Perfil() {
               <dt className="text-gray-500">Apelido</dt>
               <dd className="font-medium">{perfil.nickname}</dd>
             </div>
-            {perfil.setor_cr && (
-              <div className="flex justify-between">
-                <dt className="text-gray-500">CR/Setor</dt>
-                <dd className="font-medium">{perfil.setor_cr}</dd>
-              </div>
-            )}
-            <div className="flex justify-between">
+<div className="flex justify-between">
               <dt className="text-gray-500">Membro desde</dt>
               <dd className="font-medium">
                 {new Date(perfil.criado_em).toLocaleDateString('pt-BR')}
