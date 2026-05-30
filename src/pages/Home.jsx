@@ -69,7 +69,7 @@ export default function Home() {
     <Layout>
       <Tour />
       <div className="space-y-6">
-        <div className="card border-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white">
+        <div className="card border-0 bg-gradient-to-br from-[#075E54] via-[#128C7E] to-[#00A884] text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/70 text-sm">Olá,</p>
@@ -95,7 +95,7 @@ export default function Home() {
             <p className="text-2xl font-bold">{stats.totalPalpites}</p>
             <p className="text-xs text-white/70">Palpites</p>
           </div>
-          <div className="card border-0 bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-center">
+          <div className="card border-0 bg-gradient-to-br from-[#128C7E] to-[#075E54] text-white text-center">
             <Calendar className="mx-auto mb-1 opacity-80" size={24} />
             <p className="text-2xl font-bold">{stats.totalJogos}</p>
             <p className="text-xs text-white/70">Jogos</p>
@@ -153,20 +153,20 @@ export default function Home() {
             <p className="text-xs font-semibold">Destaques</p>
           </Link>
           <Link to="/conquistas" className="card text-center hover:scale-105 transition-transform duration-200">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center mx-auto mb-2">
-              <Award className="text-purple-500" size={20} />
+            <div className="w-10 h-10 rounded-xl bg-[#00A884]/10 dark:bg-[#00A884]/20 flex items-center justify-center mx-auto mb-2">
+              <Award className="text-[#00A884]" size={20} />
             </div>
             <p className="text-xs font-semibold">Conquistas</p>
           </Link>
           <Link to="/cara-a-cara" className="card text-center hover:scale-105 transition-transform duration-200">
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/20 flex items-center justify-center mx-auto mb-2">
-              <Swords className="text-cyan-500" size={20} />
+            <div className="w-10 h-10 rounded-xl bg-[#128C7E]/10 dark:bg-[#128C7E]/20 flex items-center justify-center mx-auto mb-2">
+              <Swords className="text-[#128C7E]" size={20} />
             </div>
             <p className="text-xs font-semibold">Cara a Cara</p>
           </Link>
           <Link to="/bonus" className="card text-center hover:scale-105 transition-transform duration-200">
-            <div className="w-10 h-10 rounded-xl bg-pink-500/10 dark:bg-pink-500/20 flex items-center justify-center mx-auto mb-2">
-              <Trophy className="text-pink-500" size={20} />
+            <div className="w-10 h-10 rounded-xl bg-[#075E54]/10 dark:bg-[#075E54]/20 flex items-center justify-center mx-auto mb-2">
+              <Trophy className="text-[#075E54] dark:text-[#00A884]" size={20} />
             </div>
             <p className="text-xs font-semibold">Palpite Bônus</p>
           </Link>
@@ -174,7 +174,7 @@ export default function Home() {
 
         <Link
           to="/regulamento"
-          className="block card border-0 bg-gradient-to-r from-primary/10 to-purple-500/10 dark:from-primary/20 dark:to-purple-500/20 text-center text-primary font-semibold hover:scale-[1.02] transition-transform duration-200"
+          className="block card border-0 bg-gradient-to-r from-primary/10 to-[#25D366]/10 dark:from-primary/20 dark:to-[#25D366]/20 text-center text-primary font-semibold hover:scale-[1.02] transition-transform duration-200"
         >
           <Trophy className="mx-auto mb-1" size={20} />
           Ver Regulamento

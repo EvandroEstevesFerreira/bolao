@@ -109,7 +109,7 @@ const secoes = [
     id: 'bonus',
     titulo: 'Palpite Bônus',
     icone: Award,
-    cor: 'text-purple-500',
+    cor: 'text-primary',
     conteudo: [
       {
         subtitulo: 'O que é',
@@ -161,7 +161,7 @@ const secoes = [
     id: 'cara-a-cara',
     titulo: 'Cara a Cara',
     icone: Swords,
-    cor: 'text-indigo-500',
+    cor: 'text-primary',
     conteudo: [
       {
         subtitulo: 'Confronto direto',

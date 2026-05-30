@@ -40,10 +40,10 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-light to-indigo-950 flex items-center justify-center p-4 overflow-hidden relative">
-      <div className="login-orb w-72 h-72 bg-primary top-[-10%] left-[-10%]" style={{ animationDelay: '0s' }} />
-      <div className="login-orb w-96 h-96 bg-purple-500 bottom-[-15%] right-[-15%]" style={{ animationDelay: '3s' }} />
-      <div className="login-orb w-48 h-48 bg-cyan-400 top-[40%] right-[10%]" style={{ animationDelay: '5s' }} />
+    <div className="min-h-screen bg-gradient-to-br from-[#075E54] via-[#128C7E] to-[#00A884] flex items-center justify-center p-4 overflow-hidden relative">
+      <div className="login-orb w-72 h-72 bg-[#25D366] top-[-10%] left-[-10%]" style={{ animationDelay: '0s' }} />
+      <div className="login-orb w-96 h-96 bg-[#075E54] bottom-[-15%] right-[-15%]" style={{ animationDelay: '3s' }} />
+      <div className="login-orb w-48 h-48 bg-[#25D366] top-[40%] right-[10%]" style={{ animationDelay: '5s' }} />
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">

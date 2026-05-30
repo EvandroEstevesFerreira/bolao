@@ -178,7 +178,7 @@ function AbaUsuarios() {
                       <button
                         onClick={() => toggleAdmin(u)}
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          u.is_admin ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-500'
+                          u.is_admin ? 'bg-teal-100 text-teal-700' : 'bg-gray-100 text-gray-500'
                         }`}
                       >
                         {u.is_admin ? 'Sim' : 'Não'}
