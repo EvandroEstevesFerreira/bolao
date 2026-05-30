@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import { formatarDataHora, jogoJaComecou } from '../lib/formatters'
 import { Trophy, ClipboardList, Calendar, TrendingUp, Star, Award, Swords, MessageCircle } from 'lucide-react'
 import Layout from '../components/Layout'
+import Tour from '../components/Tour'
 
 export default function Home() {
   const { perfil } = useAuth()
@@ -66,6 +67,7 @@ export default function Home() {
 
   return (
     <Layout>
+      <Tour />
       <div className="space-y-6">
         <div className="card bg-gradient-to-r from-primary to-primary-dark text-white">
           <div className="flex items-center justify-between">

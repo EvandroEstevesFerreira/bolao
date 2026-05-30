@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
 import {
   Home, Trophy, ClipboardList, User, Shield, LogOut,
-  MessageCircle, Sun, Moon, Star, Menu, X, Tv, Users,
+  MessageCircle, Sun, Moon, Star, Menu, X, Tv, Users, BookOpen,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -23,6 +23,7 @@ const menuItems = [
   { path: '/boloes', label: 'Bolões', icon: Users },
   { path: '/bonus', label: 'Palpite Bônus', icon: Trophy },
   { path: '/regulamento', label: 'Regulamento', icon: ClipboardList },
+  { path: '/manual', label: 'Manual', icon: BookOpen },
 ]
 
 export default function Layout({ children }) {

@@ -17,6 +17,7 @@ import PalpiteBonus from './pages/PalpiteBonus'
 import Destaques from './pages/Destaques'
 import Boloes from './pages/Boloes'
 import Resultados from './pages/Resultados'
+import Manual from './pages/Manual'
 
 function P({ children, adminOnly }) {
   return <ProtectedRoute adminOnly={adminOnly}>{children}</ProtectedRoute>
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/destaques" element={<P><Destaques /></P>} />
             <Route path="/boloes" element={<P><Boloes /></P>} />
             <Route path="/resultados" element={<P><Resultados /></P>} />
+            <Route path="/manual" element={<P><Manual /></P>} />
             <Route path="/admin" element={<P adminOnly><Admin /></P>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
