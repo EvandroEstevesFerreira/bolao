@@ -131,7 +131,7 @@ export default function Ranking() {
           <button
             onClick={() => setFiltro('geral')}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              filtro === 'geral' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'
+              filtro === 'geral' ? 'bg-primary text-white shadow-md shadow-primary/25' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
           >
             Geral
@@ -141,7 +141,7 @@ export default function Ranking() {
               key={setor}
               onClick={() => setFiltro(setor)}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                filtro === setor ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'
+                filtro === setor ? 'bg-primary text-white shadow-md shadow-primary/25' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
             >
               {setor}
@@ -165,8 +165,8 @@ export default function Ranking() {
                 <div
                   key={item.perfil.id}
                   className={`card flex items-center gap-3 py-3 ${
-                    isMe ? 'ring-2 ring-primary bg-red-50' : ''
-                  } ${idx < 3 ? 'shadow-md' : ''}`}
+                    isMe ? 'ring-2 ring-primary bg-primary/5 dark:bg-primary/10' : ''
+                  } ${idx === 0 ? 'shadow-md bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-500/10 dark:to-amber-500/10' : idx === 1 ? 'shadow-md bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-500/10 dark:to-slate-500/10' : idx === 2 ? 'shadow-md bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-500/10 dark:to-amber-500/10' : ''}`}
                 >
                   <div className="w-8 flex justify-center">
                     {getMedalha(idx)}

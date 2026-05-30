@@ -69,36 +69,36 @@ export default function Home() {
     <Layout>
       <Tour />
       <div className="space-y-6">
-        <div className="card bg-gradient-to-r from-primary to-primary-dark text-white">
+        <div className="card border-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white/80 text-sm">Olá,</p>
+              <p className="text-white/70 text-sm">Olá,</p>
               <h2 className="text-2xl font-bold">{perfil.nickname}</h2>
             </div>
             {ranking && (
               <div className="text-right">
-                <p className="text-white/80 text-sm">Posição</p>
-                <p className="text-3xl font-bold">#{ranking}</p>
+                <p className="text-white/70 text-sm">Posição</p>
+                <p className="text-4xl font-black">#{ranking}</p>
               </div>
             )}
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-3">
-          <div className="card text-center">
-            <TrendingUp className="mx-auto text-primary mb-1" size={24} />
+          <div className="card border-0 bg-gradient-to-br from-emerald-500 to-teal-600 text-white text-center">
+            <TrendingUp className="mx-auto mb-1 opacity-80" size={24} />
             <p className="text-2xl font-bold">{stats.totalPontos}</p>
-            <p className="text-xs text-gray-500">Pontos</p>
+            <p className="text-xs text-white/70">Pontos</p>
           </div>
-          <div className="card text-center">
-            <ClipboardList className="mx-auto text-primary mb-1" size={24} />
+          <div className="card border-0 bg-gradient-to-br from-amber-500 to-orange-600 text-white text-center">
+            <ClipboardList className="mx-auto mb-1 opacity-80" size={24} />
             <p className="text-2xl font-bold">{stats.totalPalpites}</p>
-            <p className="text-xs text-gray-500">Palpites</p>
+            <p className="text-xs text-white/70">Palpites</p>
           </div>
-          <div className="card text-center">
-            <Calendar className="mx-auto text-primary mb-1" size={24} />
+          <div className="card border-0 bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-center">
+            <Calendar className="mx-auto mb-1 opacity-80" size={24} />
             <p className="text-2xl font-bold">{stats.totalJogos}</p>
-            <p className="text-xs text-gray-500">Jogos</p>
+            <p className="text-xs text-white/70">Jogos</p>
           </div>
         </div>
 
@@ -146,27 +146,35 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Link to="/destaques" className="card text-center hover:shadow-md transition-shadow">
-            <Star className="mx-auto text-yellow-500 mb-1" size={20} />
+          <Link to="/destaques" className="card text-center hover:scale-105 transition-transform duration-200">
+            <div className="w-10 h-10 rounded-xl bg-yellow-500/10 dark:bg-yellow-500/20 flex items-center justify-center mx-auto mb-2">
+              <Star className="text-yellow-500" size={20} />
+            </div>
             <p className="text-xs font-semibold">Destaques</p>
           </Link>
-          <Link to="/conquistas" className="card text-center hover:shadow-md transition-shadow">
-            <Award className="mx-auto text-purple-500 mb-1" size={20} />
+          <Link to="/conquistas" className="card text-center hover:scale-105 transition-transform duration-200">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center mx-auto mb-2">
+              <Award className="text-purple-500" size={20} />
+            </div>
             <p className="text-xs font-semibold">Conquistas</p>
           </Link>
-          <Link to="/cara-a-cara" className="card text-center hover:shadow-md transition-shadow">
-            <Swords className="mx-auto text-blue-500 mb-1" size={20} />
+          <Link to="/cara-a-cara" className="card text-center hover:scale-105 transition-transform duration-200">
+            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/20 flex items-center justify-center mx-auto mb-2">
+              <Swords className="text-cyan-500" size={20} />
+            </div>
             <p className="text-xs font-semibold">Cara a Cara</p>
           </Link>
-          <Link to="/bonus" className="card text-center hover:shadow-md transition-shadow">
-            <Trophy className="mx-auto text-primary mb-1" size={20} />
+          <Link to="/bonus" className="card text-center hover:scale-105 transition-transform duration-200">
+            <div className="w-10 h-10 rounded-xl bg-pink-500/10 dark:bg-pink-500/20 flex items-center justify-center mx-auto mb-2">
+              <Trophy className="text-pink-500" size={20} />
+            </div>
             <p className="text-xs font-semibold">Palpite Bônus</p>
           </Link>
         </div>
 
         <Link
           to="/regulamento"
-          className="block card text-center text-primary font-semibold hover:shadow-md transition-shadow"
+          className="block card border-0 bg-gradient-to-r from-primary/10 to-purple-500/10 dark:from-primary/20 dark:to-purple-500/20 text-center text-primary font-semibold hover:scale-[1.02] transition-transform duration-200"
         >
           <Trophy className="mx-auto mb-1" size={20} />
           Ver Regulamento

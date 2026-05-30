@@ -40,8 +40,8 @@ export default function CartaoPartida({ partida, palpite, onSalvarPalpite, selec
   return (
     <div
       className={`card transition-all ${
-        aoVivo ? 'border-green-400 border-2 shadow-green-100' :
-        encerrado ? 'bg-gray-50' : ''
+        aoVivo ? 'border-green-400 border-2 shadow-lg shadow-green-500/10 dark:shadow-green-500/5' :
+        encerrado ? 'bg-gray-50 dark:bg-white/[0.03]' : 'hover:shadow-md'
       }`}
     >
       <div className="flex items-center justify-between mb-3">
