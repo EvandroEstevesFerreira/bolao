@@ -61,7 +61,7 @@ export default function Convite() {
             <span className="text-white text-2xl font-bold">S</span>
           </div>
           <h1 className="text-xl font-bold text-white">Resgate seu Convite</h1>
-          <p className="text-gray-400 text-sm mt-1">Preencha seus dados para participar do bolão</p>
+          <p className="text-gray-400 text-sm mt-1">Preencha seus dados para participar</p>
         </div>
 
         <form onSubmit={handleSubmit} className="card space-y-4">

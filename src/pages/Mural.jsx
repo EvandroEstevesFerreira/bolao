@@ -127,7 +127,7 @@ export default function Mural() {
                     className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${
                       isMe
                         ? 'bg-primary text-white rounded-br-md'
-                        : 'bg-white border border-gray-200 rounded-bl-md'
+                        : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-bl-md'
                     }`}
                   >
                     {!isMe && (
@@ -148,7 +148,7 @@ export default function Mural() {
         </div>
 
         {bolaoId && (
-          <form onSubmit={enviarComentario} className="flex gap-2 pt-3 border-t border-gray-200">
+          <form onSubmit={enviarComentario} className="flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
             <input
               type="text"
               value={texto}

@@ -21,6 +21,34 @@
   html.dark body {
     @apply bg-gray-900 text-gray-100;
   }
+
+  .dark h3 {
+    @apply text-gray-100;
+  }
+
+  .dark p {
+    @apply text-gray-300;
+  }
+
+  .dark th {
+    @apply text-gray-200;
+  }
+
+  .dark td {
+    @apply text-gray-300;
+  }
+
+  .dark li {
+    @apply text-gray-300;
+  }
+
+  .dark label {
+    @apply text-gray-300;
+  }
+
+  .dark tr {
+    @apply border-gray-700;
+  }
 }
 
 @layer components {
@@ -44,7 +72,7 @@
   }
 
   .dark .card {
-    @apply bg-gray-800 border-gray-700;
+    @apply bg-gray-800 border-gray-700 text-gray-100;
   }
 
   .input-field {
@@ -54,7 +82,7 @@
   }
 
   .dark .input-field {
-    @apply bg-gray-800 border-gray-600 text-gray-100;
+    @apply bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400;
   }
 
   .score-input {
@@ -64,6 +92,6 @@
   }
 
   .dark .score-input {
-    @apply bg-gray-800 border-gray-600 text-gray-100;
+    @apply bg-gray-700 border-gray-600 text-gray-100;
   }
 }

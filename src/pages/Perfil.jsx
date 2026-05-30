@@ -82,7 +82,7 @@ export default function Perfil() {
               <h3 className="text-xl font-bold">{perfil.nickname}</h3>
               <p className="text-gray-500 text-sm">{perfil.nome}</p>
               {perfil.setor_cr && (
-                <span className="inline-block mt-1 px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-600">
+                <span className="inline-block mt-1 px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs text-gray-600 dark:text-gray-300">
                   {perfil.setor_cr}
                 </span>
               )}

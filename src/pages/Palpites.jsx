@@ -122,7 +122,7 @@ export default function Palpites() {
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                 faseAtiva === fase.value
                   ? 'bg-primary text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
             >
               {fase.label}
@@ -135,7 +135,7 @@ export default function Palpites() {
             <button
               onClick={() => setGrupoAtivo(null)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                !grupoAtivo ? 'bg-dark text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                !grupoAtivo ? 'bg-dark text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               Todos
@@ -145,7 +145,7 @@ export default function Palpites() {
                 key={g}
                 onClick={() => setGrupoAtivo(g)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                  grupoAtivo === g ? 'bg-dark text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  grupoAtivo === g ? 'bg-dark text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 {g}
