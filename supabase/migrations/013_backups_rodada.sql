@@ -17,10 +17,10 @@ alter table backups_rodada enable row level security;
 
 create policy "backup_leitura_admin" on backups_rodada
   for select using (
-    exists (select 1 from perfis where id = criado_por and admin = true)
+    exists (select 1 from perfis where id = criado_por and is_admin = true)
   );
 
 create policy "backup_insert_admin" on backups_rodada
   for insert with check (
-    exists (select 1 from perfis where id = criado_por and admin = true)
+    exists (select 1 from perfis where id = criado_por and is_admin = true)
   );
