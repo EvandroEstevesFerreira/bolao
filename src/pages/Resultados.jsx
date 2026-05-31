@@ -113,7 +113,7 @@ function CartaoResultado({ partida, selecoes }) {
   const encerrado = partida.status === 'encerrado'
 
   return (
-    <div className={`card py-4 ${aoVivo ? 'border-2 border-green-400 shadow-green-100' : ''}`}>
+    <div className={`card py-4 ${aoVivo ? 'border-2 border-green-400 shadow-green-100 dark:shadow-green-500/5' : ''}`}>
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs text-gray-500">
           {partida.rodada} · {partida.grupo ? `Grupo ${partida.grupo}` : partida.fase}
@@ -150,7 +150,7 @@ function CartaoResultado({ partida, selecoes }) {
               {partida.placar_casa ?? '-'} × {partida.placar_fora ?? '-'}
             </span>
           ) : (
-            <span className="text-gray-400 text-sm">vs</span>
+            <span className="text-gray-400 dark:text-[#8696A0] text-sm">vs</span>
           )}
           {partida.decidido_penaltis && (
             <p className="text-xs text-gray-500 mt-0.5">
@@ -168,7 +168,7 @@ function CartaoResultado({ partida, selecoes }) {
       </div>
 
       {partida.estadio && (
-        <p className="text-xs text-gray-400 text-center mt-2">
+        <p className="text-xs text-gray-400 dark:text-[#8696A0] text-center mt-2">
           {partida.estadio} — {partida.cidade}
         </p>
       )}

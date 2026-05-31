@@ -7,7 +7,7 @@ export default function Regulamento() {
     <Layout>
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <Link to="/" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+          <Link to="/" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#2A3942]">
             <ArrowLeft size={20} />
           </Link>
           <div>
@@ -33,29 +33,29 @@ export default function Regulamento() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b-2 border-gray-200">
+                <tr className="border-b-2 border-gray-200 dark:border-[#2A3942]">
                   <th className="py-2 text-left">Pontos</th>
                   <th className="py-2 text-left">Critério</th>
                   <th className="py-2 text-left">Exemplo</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-100">
+                <tr className="border-b border-gray-100 dark:border-[#2A3942]">
                   <td className="py-2 font-bold text-yellow-600">10</td>
                   <td>Acertou o vencedor <strong>e</strong> o placar exato</td>
                   <td className="text-gray-500">Jogo: 3×1, Palpite: 3×1</td>
                 </tr>
-                <tr className="border-b border-gray-100">
+                <tr className="border-b border-gray-100 dark:border-[#2A3942]">
                   <td className="py-2 font-bold text-green-600">7</td>
                   <td>Acertou o vencedor <strong>e</strong> o placar de um time</td>
                   <td className="text-gray-500">Jogo: 3×1, Palpite: 3×0</td>
                 </tr>
-                <tr className="border-b border-gray-100">
+                <tr className="border-b border-gray-100 dark:border-[#2A3942]">
                   <td className="py-2 font-bold text-blue-600">5</td>
                   <td>Acertou apenas o vencedor (ou empate)</td>
                   <td className="text-gray-500">Jogo: 3×1, Palpite: 2×0</td>
                 </tr>
-                <tr className="border-b border-gray-100">
+                <tr className="border-b border-gray-100 dark:border-[#2A3942]">
                   <td className="py-2 font-bold text-orange-600">2</td>
                   <td>Acertou o placar de um time, mas errou o resultado</td>
                   <td className="text-gray-500">Jogo: 3×1, Palpite: 1×2</td>
@@ -106,7 +106,7 @@ export default function Regulamento() {
             Os percentuais de premiação por posição são definidos pelo organizador (ex.: 1º = 60%, 2º = 30%, 3º = 10%). O sistema calcula e exibe o valor estimado com base na arrecadação.
           </p>
 
-          <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-xl">
             <p className="text-sm text-yellow-800 dark:text-yellow-200 font-medium">
               ⚠️ Aviso de isenção: Este sistema é ferramenta de acompanhamento e cálculo. A arrecadação e a entrega de qualquer prêmio são responsabilidade exclusiva do organizador/grupo. O sistema não processa nem retém valores.
             </p>

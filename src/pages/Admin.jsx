@@ -976,7 +976,7 @@ function AbaBoloes() {
                     Editar
                   </button>
                 </div>
-                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-[#2A3942] flex items-center justify-between">
                   <div>
                     <p className="text-xs text-gray-400">Código de entrada</p>
                     <p className="font-mono text-sm font-bold">{b.codigo_convite}</p>
@@ -1024,8 +1024,8 @@ export default function Admin() {
             <button
               key={aba.id}
               onClick={() => setAbaAtiva(aba.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium flex items-center gap-1.5 whitespace-nowrap transition-colors ${
-                abaAtiva === aba.id ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+              className={`px-4 py-2 rounded-full text-sm font-medium flex items-center gap-1.5 whitespace-nowrap transition-colors chip ${
+                abaAtiva === aba.id ? 'chip-active' : 'chip-inactive'
               }`}
             >
               <aba.icon size={14} />

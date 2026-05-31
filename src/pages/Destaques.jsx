@@ -101,7 +101,7 @@ export default function Destaques() {
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         ) : !destaques || destaques.totalJogosEncerrados === 0 ? (
-          <div className="card text-center text-gray-500 py-8">
+          <div className="card text-center text-gray-500 dark:text-[#8696A0] py-8">
             <p>Os destaques aparecem após o primeiro jogo encerrado.</p>
           </div>
         ) : (
@@ -110,7 +110,7 @@ export default function Destaques() {
               <CardDestaque
                 titulo="Líder do Ranking"
                 icon={TrendingUp}
-                cor="text-yellow-500 bg-yellow-50"
+                cor="text-yellow-500 bg-yellow-50 dark:bg-yellow-500/10"
                 nickname={destaques.lider.nickname}
                 detalhe={`${destaques.lider.pontos} pontos`}
               />
@@ -120,7 +120,7 @@ export default function Destaques() {
               <CardDestaque
                 titulo="Mais Cravadas"
                 icon={Target}
-                cor="text-green-500 bg-green-50"
+                cor="text-green-500 bg-green-50 dark:bg-green-500/10"
                 nickname={destaques.maisCravadas.nickname}
                 detalhe={`${destaques.maisCravadas.cravadas} cravadas`}
               />
@@ -130,7 +130,7 @@ export default function Destaques() {
               <CardDestaque
                 titulo={`Destaque — ${destaques.maiorPontuadorRodada.rodada}`}
                 icon={Zap}
-                cor="text-blue-500 bg-blue-50"
+                cor="text-blue-500 bg-blue-50 dark:bg-blue-500/10"
                 nickname={destaques.maiorPontuadorRodada.nickname}
                 detalhe={`${destaques.maiorPontuadorRodada.pontos} pts na rodada`}
               />

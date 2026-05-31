@@ -47,7 +47,7 @@ export default function Perfil() {
           {editando ? (
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 text-left">Apelido</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-[#D1D7DB] mb-1 text-left">Apelido</label>
                 <input
                   type="text"
                   value={nickname}
@@ -90,15 +90,15 @@ export default function Perfil() {
         <div className="card">
           <h4 className="font-semibold mb-3">Informações</h4>
           <dl className="space-y-2 text-sm">
-            <div className="flex justify-between">
+            <div className="flex justify-between border-b border-gray-50 dark:border-[#2A3942] last:border-0 pb-2">
               <dt className="text-gray-500">Nome</dt>
               <dd className="font-medium">{perfil.nome}</dd>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between border-b border-gray-50 dark:border-[#2A3942] last:border-0 pb-2">
               <dt className="text-gray-500">Apelido</dt>
               <dd className="font-medium">{perfil.nickname}</dd>
             </div>
-<div className="flex justify-between">
+            <div className="flex justify-between border-b border-gray-50 dark:border-[#2A3942] last:border-0 pb-2">
               <dt className="text-gray-500">Membro desde</dt>
               <dd className="font-medium">
                 {new Date(perfil.criado_em).toLocaleDateString('pt-BR')}

@@ -141,8 +141,8 @@ export default function CaraACara() {
                 </div>
 
                 <div className="text-center flex-1">
-                  <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-2">
-                    <span className="text-2xl font-bold text-gray-600">
+                  <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-[#2A3942] flex items-center justify-center mx-auto mb-2">
+                    <span className="text-2xl font-bold text-gray-500 dark:text-[#D1D7DB]">
                       {oponente.nickname?.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -171,7 +171,7 @@ export default function CaraACara() {
                 />
 
                 <div className="text-center pt-3 border-t border-gray-100 dark:border-[#2A3942]">
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-[#8696A0]">
                     {comparacao.jogosComuns} jogos comparados · {comparacao.empates} empates
                   </p>
                 </div>
@@ -195,7 +195,7 @@ function LinhaComparacao({ label, icon: Icon, meu, opo }) {
       </div>
       <div className="w-24 text-center">
         <Icon size={14} className="text-gray-400 mx-auto mb-0.5" />
-        <p className="text-xs text-gray-500 leading-tight">{label}</p>
+        <p className="text-xs text-gray-500 dark:text-[#8696A0] leading-tight">{label}</p>
       </div>
       <div className={`flex-1 text-left ${opoGanha ? 'font-bold text-primary' : ''}`}>
         <span className="text-lg">{opo}</span>

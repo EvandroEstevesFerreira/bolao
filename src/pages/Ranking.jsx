@@ -168,7 +168,7 @@ export default function Ranking() {
                     {getMedalha(idx)}
                   </div>
 
-                  <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 overflow-hidden flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-[#2A3942] flex items-center justify-center text-sm font-bold text-gray-500 dark:text-[#D1D7DB] overflow-hidden flex-shrink-0">
                     {item.perfil.avatar_url ? (
                       <img src={item.perfil.avatar_url} alt="" className="w-full h-full object-cover" />
                     ) : (
@@ -188,8 +188,8 @@ export default function Ranking() {
 
                   <div className="text-right flex-shrink-0">
                     <p className="font-bold text-lg">{item.totalPontos}</p>
-                    <p className="text-xs text-gray-400">
-                      {item.cravadas > 0 && `${item.cravadas}🎯`} {item.totalPalpites} jogos
+                    <p className="text-xs text-gray-400 dark:text-[#8696A0]">
+                      {item.cravadas > 0 && `${item.cravadas} crav.`} <span className="tabular-nums">{item.totalPalpites}</span> jogos
                     </p>
                     {getPremioPosicao(idx) && (
                       <p className="text-xs text-green-600 font-semibold flex items-center justify-end gap-0.5 mt-0.5">
