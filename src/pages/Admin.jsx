@@ -36,15 +36,15 @@ function AbaUsuarios() {
   async function cadastrarUsuario(e) {
     e.preventDefault()
     setErro(''); setSucesso('')
-    const cpf = limparCPF(novoCpf)
-    if (!validarCPF(cpf)) { setErro('CPF inválido.'); return }
     if (!novoNome.trim()) { setErro('Nome é obrigatório.'); return }
+    const cpf = limparCPF(novoCpf)
+    if (cpf && !validarCPF(cpf)) { setErro('CPF inválido.'); return }
 
     const dados = {
-      cpf,
       nome: novoNome.trim(),
       nickname: novoNome.trim().split(' ')[0].toLowerCase() + Math.floor(Math.random() * 100),
     }
+    if (cpf) dados.cpf = cpf
     if (novoEmail.trim()) dados.email = novoEmail.trim()
     if (novoTelefone.trim()) dados.telefone = novoTelefone.replace(/\D/g, '')
 
@@ -67,18 +67,31 @@ function AbaUsuarios() {
 
     for (const linha of linhas) {
       const partes = linha.split(/[;,\t]/).map(p => p.trim())
-      if (partes.length < 2) { erros++; continue }
-      const cpf = limparCPF(partes[0])
-      const nome = partes[1]
-      if (!validarCPF(cpf) || !nome) { erros++; continue }
+      if (partes.length < 1 || !partes[0]) { erros++; continue }
+
+      // Detectar se primeiro campo é CPF ou Nome
+      const primeiroCampo = partes[0]
+      const ehCpf = /^\d{11,14}$/.test(primeiroCampo.replace(/\D/g, '')) && validarCPF(limparCPF(primeiroCampo))
+
+      let cpf = null, nome = null, emailIdx = -1, telIdx = -1
+      if (ehCpf) {
+        cpf = limparCPF(primeiroCampo)
+        nome = partes[1] || null
+        emailIdx = 2; telIdx = 3
+      } else {
+        nome = primeiroCampo
+        emailIdx = 1; telIdx = 2
+      }
+
+      if (!nome) { erros++; continue }
 
       const dados = {
-        cpf,
         nome,
         nickname: nome.split(' ')[0].toLowerCase() + Math.floor(Math.random() * 100),
       }
-      if (partes[2] && partes[2].includes('@')) dados.email = partes[2]
-      if (partes[3]) dados.telefone = partes[3].replace(/\D/g, '')
+      if (cpf) dados.cpf = cpf
+      if (partes[emailIdx] && partes[emailIdx].includes('@')) dados.email = partes[emailIdx]
+      if (partes[telIdx]) dados.telefone = partes[telIdx].replace(/\D/g, '')
 
       const { error } = await supabase.from('perfis').insert(dados)
       if (error) erros++
@@ -155,11 +168,11 @@ function AbaUsuarios() {
       {modoLote ? (
         <div className="card space-y-3">
           <h4 className="font-semibold">Cadastro em lote</h4>
-          <p className="text-xs text-gray-500 dark:text-[#8696A0]">Uma pessoa por linha: CPF;Nome;E-mail(opcional);Telefone(opcional)</p>
+          <p className="text-xs text-gray-500 dark:text-[#8696A0]">Uma pessoa por linha: Nome;E-mail;Telefone (ou CPF;Nome;E-mail;Telefone)</p>
           <textarea
             value={lote}
             onChange={e => setLote(e.target.value)}
-            placeholder="12345678901;João da Silva;joao@email.com;11999998888&#10;98765432100;Maria Santos"
+            placeholder="João da Silva;joao@email.com;11999998888&#10;Maria Santos;maria@email.com&#10;12345678901;Carlos Lima;carlos@email.com"
             className="input-field h-32 font-mono text-sm"
           />
           <button onClick={cadastrarLote} className="btn-primary">Cadastrar Todos</button>
@@ -175,7 +188,7 @@ function AbaUsuarios() {
               type="text"
               value={novoCpf}
               onChange={(e) => setNovoCpf(e.target.value.length <= 14 ? formatarCPF(limparCPF(e.target.value)) : novoCpf)}
-              placeholder="CPF *"
+              placeholder="CPF (opcional)"
               className="input-field"
               inputMode="numeric"
             />

@@ -26,7 +26,7 @@ export default function Convite() {
     setErro('')
 
     const cpfLimpo = limparCPF(cpf)
-    if (!validarCPF(cpfLimpo)) { setErro('CPF inválido.'); return }
+    if (cpfLimpo && !validarCPF(cpfLimpo)) { setErro('CPF inválido.'); return }
     if (!nome.trim()) { setErro('Informe seu nome completo.'); return }
     if (!nickname.trim()) { setErro('Escolha um apelido.'); return }
     if (nickname.trim().length < 3) { setErro('Apelido deve ter pelo menos 3 caracteres.'); return }
@@ -37,7 +37,7 @@ export default function Convite() {
     setCarregando(true)
     try {
       await resgatarConvite(token.trim(), {
-        cpf: cpfLimpo,
+        cpf: cpfLimpo || null,
         nome: nome.trim(),
         nickname: nickname.trim(),
         pin,
@@ -82,7 +82,7 @@ export default function Convite() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">CPF</label>
+            <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">CPF <span className="text-[#8696A0] font-normal">(opcional)</span></label>
             <input type="text" value={cpf} onChange={handleCpfChange} placeholder="000.000.000-00"
               className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
               inputMode="numeric" />
