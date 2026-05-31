@@ -1,21 +1,98 @@
 import { useRef, useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Download, Share2 } from 'lucide-react'
+import { Download, Share2, Camera, ChevronDown } from 'lucide-react'
 import html2canvas from 'html2canvas'
 
 const POSICAO_SUFIXO = (n) => n === 1 ? '1o' : n === 2 ? '2o' : n === 3 ? '3o' : `${n}o`
 
+const CORES_SELECOES = {
+  'Brazil': ['#006B3F', '#FFDF00'],
+  'Argentina': ['#6CACE4', '#FFFFFF'],
+  'Germany': ['#000000', '#DD0000'],
+  'France': ['#002654', '#ED2939'],
+  'Spain': ['#AA151B', '#F1BF00'],
+  'England': ['#CF081F', '#FFFFFF'],
+  'Portugal': ['#006B3F', '#FF0000'],
+  'Netherlands': ['#FF6600', '#FFFFFF'],
+  'Italy': ['#0066B3', '#FFFFFF'],
+  'Belgium': ['#ED2939', '#FDDA24'],
+  'Croatia': ['#FF0000', '#FFFFFF'],
+  'Uruguay': ['#5CBFEB', '#FFFFFF'],
+  'Colombia': ['#FCD116', '#003893'],
+  'Mexico': ['#006847', '#CE1126'],
+  'USA': ['#002868', '#BF0A30'],
+  'Japan': ['#BC002D', '#FFFFFF'],
+  'South Korea': ['#CD2E3A', '#0047A0'],
+  'Australia': ['#00843D', '#FFCD00'],
+  'Saudi Arabia': ['#006C35', '#FFFFFF'],
+  'Canada': ['#FF0000', '#FFFFFF'],
+  'Morocco': ['#C1272D', '#006233'],
+  'Senegal': ['#009639', '#FDEF42'],
+  'Ghana': ['#006B3F', '#FCD116'],
+  'Cameroon': ['#007A5E', '#CE1126'],
+  'Nigeria': ['#008751', '#FFFFFF'],
+  'Tunisia': ['#E70013', '#FFFFFF'],
+  'Ecuador': ['#FFD100', '#034EA2'],
+  'Chile': ['#D52B1E', '#FFFFFF'],
+  'Paraguay': ['#DA121A', '#0038A8'],
+  'Peru': ['#D91023', '#FFFFFF'],
+  'Serbia': ['#C6363C', '#21357E'],
+  'Switzerland': ['#DA291C', '#FFFFFF'],
+  'Denmark': ['#C60C30', '#FFFFFF'],
+  'Poland': ['#DC143C', '#FFFFFF'],
+  'Wales': ['#C8102E', '#00A650'],
+  'Scotland': ['#003078', '#FFFFFF'],
+  'Costa Rica': ['#002B7F', '#CE1126'],
+  'Panama': ['#DA121A', '#003DA5'],
+  'Honduras': ['#0051A5', '#FFFFFF'],
+  'Jamaica': ['#009B3A', '#FED100'],
+  'Qatar': ['#8A1538', '#FFFFFF'],
+  'Iran': ['#239F40', '#DA0000'],
+  'Egypt': ['#CE1126', '#000000'],
+  'Algeria': ['#006233', '#FFFFFF'],
+  'Ivory Coast': ['#FF8200', '#009E49'],
+  'DR Congo': ['#007FFF', '#CE1021'],
+  'Bolivia': ['#007934', '#D52B1E'],
+  'Venezuela': ['#CF142B', '#00247D'],
+}
+
+const STORAGE_KEY_FOTO = 'bolao_foto_perfil'
+const STORAGE_KEY_SELECAO = 'bolao_selecao_favorita'
+
 export default function Figurinha({ perfil }) {
   const ref = useRef(null)
+  const fileRef = useRef(null)
   const [exportando, setExportando] = useState(false)
   const [stats, setStats] = useState({ posicao: '-', pontos: 0, cravadas: 0, jogos: 0, conquistas: 0 })
+  const [foto, setFoto] = useState(() => localStorage.getItem(STORAGE_KEY_FOTO) || null)
+  const [selecoes, setSelecoes] = useState([])
+  const [selecaoId, setSelecaoId] = useState(() => localStorage.getItem(STORAGE_KEY_SELECAO) || '')
+  const [selecaoEscolhida, setSelecaoEscolhida] = useState(null)
+  const [mostrarSelecoes, setMostrarSelecoes] = useState(false)
 
   useEffect(() => {
     carregarStats()
+    carregarSelecoes()
   }, [perfil.id])
 
+  useEffect(() => {
+    if (selecaoId && selecoes.length > 0) {
+      const sel = selecoes.find(s => String(s.id) === String(selecaoId))
+      setSelecaoEscolhida(sel || null)
+    }
+  }, [selecaoId, selecoes])
+
+  async function carregarSelecoes() {
+    const { data } = await supabase.from('selecoes').select('id, nome, bandeira_url, codigo_fifa').order('nome')
+    setSelecoes(data || [])
+    if (selecaoId && data) {
+      const sel = data.find(s => String(s.id) === String(selecaoId))
+      setSelecaoEscolhida(sel || null)
+    }
+  }
+
   async function carregarStats() {
-    const [palpitesRes, perfisRes, conquistasRes] = await Promise.all([
+    const [palpitesRes, , conquistasRes] = await Promise.all([
       supabase.from('palpites').select('usuario_id, pontos'),
       supabase.from('perfis').select('id').eq('ativo', true),
       supabase.from('conquistas').select('id').eq('usuario_id', perfil.id),
@@ -41,6 +118,38 @@ export default function Figurinha({ perfil }) {
       jogos: meu.jogos,
       conquistas: conquistasRes.data?.length || 0,
     })
+  }
+
+  function handleFoto(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const size = 300
+        canvas.width = size
+        canvas.height = size
+        const ctx = canvas.getContext('2d')
+        const min = Math.min(img.width, img.height)
+        const sx = (img.width - min) / 2
+        const sy = (img.height - min) / 2
+        ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size)
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85)
+        setFoto(dataUrl)
+        localStorage.setItem(STORAGE_KEY_FOTO, dataUrl)
+      }
+      img.src = ev.target.result
+    }
+    reader.readAsDataURL(file)
+  }
+
+  function escolherSelecao(sel) {
+    setSelecaoId(String(sel.id))
+    setSelecaoEscolhida(sel)
+    localStorage.setItem(STORAGE_KEY_SELECAO, String(sel.id))
+    setMostrarSelecoes(false)
   }
 
   async function exportar() {
@@ -80,18 +189,66 @@ export default function Figurinha({ perfil }) {
   }
 
   const iniciais = (perfil.nickname || perfil.nome || '??').slice(0, 2).toUpperCase()
-  const corIndex = perfil.id ? perfil.id.charCodeAt(0) % 5 : 0
-  const cores = [
-    ['#1B5E20', '#4CAF50'],
-    ['#0D47A1', '#2196F3'],
-    ['#B71C1C', '#F44336'],
-    ['#E65100', '#FF9800'],
-    ['#4A148C', '#9C27B0'],
-  ]
-  const [corBase, corClara] = cores[corIndex]
+  const nomeSel = selecaoEscolhida?.nome || ''
+  const coresSel = CORES_SELECOES[nomeSel]
+  const corBase = coresSel ? coresSel[0] : '#1B5E20'
+  const corClara = coresSel ? coresSel[1] : '#4CAF50'
 
   return (
     <div className="space-y-4">
+      {/* Controles */}
+      <div className="flex gap-2 justify-center flex-wrap">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          capture="user"
+          className="hidden"
+          onChange={handleFoto}
+        />
+        <button
+          onClick={() => fileRef.current?.click()}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-white dark:bg-[#2A3942] border border-gray-200 dark:border-[#3B4A54] text-gray-700 dark:text-[#D1D7DB] hover:bg-gray-50 dark:hover:bg-[#3B4A54] transition-colors"
+        >
+          <Camera size={15} />
+          {foto ? 'Trocar Foto' : 'Adicionar Foto'}
+        </button>
+        <button
+          onClick={() => setMostrarSelecoes(!mostrarSelecoes)}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-white dark:bg-[#2A3942] border border-gray-200 dark:border-[#3B4A54] text-gray-700 dark:text-[#D1D7DB] hover:bg-gray-50 dark:hover:bg-[#3B4A54] transition-colors"
+        >
+          {selecaoEscolhida?.bandeira_url && (
+            <img src={selecaoEscolhida.bandeira_url} alt="" className="w-5 h-3.5 rounded-sm object-cover" />
+          )}
+          {selecaoEscolhida ? selecaoEscolhida.nome : 'Escolher Seleção'}
+          <ChevronDown size={14} />
+        </button>
+      </div>
+
+      {/* Seletor de seleções */}
+      {mostrarSelecoes && (
+        <div className="card max-h-48 overflow-y-auto">
+          <div className="grid grid-cols-2 gap-1">
+            {selecoes.map(sel => (
+              <button
+                key={sel.id}
+                onClick={() => escolherSelecao(sel)}
+                className={`flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm transition-colors text-left ${
+                  String(sel.id) === String(selecaoId)
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'hover:bg-gray-50 dark:hover:bg-[#2A3942] text-gray-700 dark:text-[#D1D7DB]'
+                }`}
+              >
+                {sel.bandeira_url && (
+                  <img src={sel.bandeira_url} alt="" className="w-6 h-4 rounded-sm object-cover flex-shrink-0" />
+                )}
+                <span className="truncate">{sel.nome}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Figurinha renderizável */}
       <div className="flex justify-center">
         <div
@@ -106,21 +263,25 @@ export default function Figurinha({ perfil }) {
           }}
         >
           {/* Moldura dourada */}
-          <div
-            style={{
-              position: 'absolute', inset: 4,
-              borderRadius: 16,
-              border: '2.5px solid',
-              borderImage: 'linear-gradient(135deg, #FFD700, #B8860B, #FFD700, #DAA520, #FFD700) 1',
-              pointerEvents: 'none',
-              zIndex: 10,
-            }}
-          />
+          <div style={{
+            position: 'absolute', inset: 4,
+            borderRadius: 16,
+            border: '2.5px solid',
+            borderImage: 'linear-gradient(135deg, #FFD700, #B8860B, #FFD700, #DAA520, #FFD700) 1',
+            pointerEvents: 'none', zIndex: 10,
+          }} />
 
-          {/* Padrão decorativo topo */}
+          {/* Padrão decorativo topo com cor da seleção */}
           <div style={{
             position: 'absolute', top: 0, left: 0, right: 0, height: 130,
             background: `linear-gradient(180deg, ${corClara}30 0%, transparent 100%)`,
+            zIndex: 1,
+          }} />
+
+          {/* Faixas diagonais estilo camisa */}
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+            background: `repeating-linear-gradient(135deg, ${corClara}08, ${corClara}08 20px, transparent 20px, transparent 40px)`,
             zIndex: 1,
           }} />
 
@@ -136,7 +297,7 @@ export default function Figurinha({ perfil }) {
             }}>★</div>
           ))}
 
-          {/* Header - Copa 2026 */}
+          {/* Header */}
           <div style={{
             position: 'relative', zIndex: 5,
             textAlign: 'center', paddingTop: 18,
@@ -156,7 +317,24 @@ export default function Figurinha({ perfil }) {
             </div>
           </div>
 
-          {/* Avatar */}
+          {/* Bandeira da seleção no canto */}
+          {selecaoEscolhida?.bandeira_url && (
+            <div style={{
+              position: 'absolute', top: 14, right: 14, zIndex: 8,
+              borderRadius: 4, overflow: 'hidden',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+              border: '1.5px solid rgba(255,255,255,0.2)',
+            }}>
+              <img
+                src={selecaoEscolhida.bandeira_url}
+                alt=""
+                style={{ width: 32, height: 22, objectFit: 'cover', display: 'block' }}
+                crossOrigin="anonymous"
+              />
+            </div>
+          )}
+
+          {/* Avatar / Foto */}
           <div style={{
             position: 'relative', zIndex: 5,
             display: 'flex', justifyContent: 'center',
@@ -164,14 +342,19 @@ export default function Figurinha({ perfil }) {
           }}>
             <div style={{
               width: 100, height: 100, borderRadius: '50%',
-              background: `linear-gradient(135deg, ${corClara}, ${corBase})`,
+              background: foto ? 'transparent' : `linear-gradient(135deg, ${corClara}, ${corBase})`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '3px solid #FFD700',
+              border: `3px solid ${corClara}`,
               boxShadow: `0 4px 20px ${corClara}40, 0 0 0 6px ${corBase}50`,
               fontSize: 38, fontWeight: 800, color: '#FFFFFF',
               textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+              overflow: 'hidden',
             }}>
-              {iniciais}
+              {foto ? (
+                <img src={foto} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                iniciais
+              )}
             </div>
           </div>
 
@@ -190,8 +373,15 @@ export default function Figurinha({ perfil }) {
             <div style={{
               fontSize: 10, color: '#FFFFFF80',
               marginTop: 2,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
             }}>
-              {perfil.nome}
+              {selecaoEscolhida ? (
+                <>
+                  <span>{selecaoEscolhida.codigo_fifa || selecaoEscolhida.nome}</span>
+                </>
+              ) : (
+                perfil.nome
+              )}
             </div>
           </div>
 
@@ -275,13 +465,12 @@ export default function Figurinha({ perfil }) {
             position: 'absolute', top: '-50%', left: '-30%',
             width: '60%', height: '200%',
             background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent)',
-            transform: 'skewX(-20deg)',
-            zIndex: 3,
+            transform: 'skewX(-20deg)', zIndex: 3,
           }} />
         </div>
       </div>
 
-      {/* Botões */}
+      {/* Botões de ação */}
       <div className="flex gap-2 justify-center">
         <button
           onClick={exportar}
