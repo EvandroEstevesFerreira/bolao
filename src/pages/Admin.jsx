@@ -6,7 +6,7 @@ import { formatarMoeda } from '../lib/formatters'
 import { calcularPontos } from '../lib/pontuacao'
 import {
   Users, Link2, Trophy, Settings, Plus, Copy, Check,
-  RefreshCw, DollarSign, BarChart3, FileText, Database, Download,
+  RefreshCw, DollarSign, BarChart3, FileText, Database, Download, Activity,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 
@@ -1198,6 +1198,144 @@ function AbaBackups() {
   )
 }
 
+function AbaSync() {
+  const [logs, setLogs] = useState([])
+  const [carregando, setCarregando] = useState(true)
+  const [reqHoje, setReqHoje] = useState(0)
+  const [sincronizando, setSincronizando] = useState(false)
+  const [resultado, setResultado] = useState(null)
+
+  const LIMITE = 80
+
+  useEffect(() => { carregarLogs() }, [])
+
+  async function carregarLogs() {
+    setCarregando(true)
+    const { data } = await supabase
+      .from('sync_log')
+      .select('*')
+      .order('criado_em', { ascending: false })
+      .limit(30)
+    setLogs(data || [])
+
+    const hoje = (data || []).filter(l =>
+      l.criado_em && new Date(l.criado_em).toDateString() === new Date().toDateString() && !l.erro
+    )
+    setReqHoje(hoje.reduce((acc, l) => acc + (l.requisicoes_api || 0), 0))
+    setCarregando(false)
+  }
+
+  async function forcarSync() {
+    setSincronizando(true)
+    setResultado(null)
+    try {
+      const { data, error } = await supabase.functions.invoke('auto-sync')
+      if (error) {
+        setResultado({ ok: false, msg: error.message })
+      } else {
+        setResultado({ ok: true, data })
+        carregarLogs()
+      }
+    } catch (err) {
+      setResultado({ ok: false, msg: String(err) })
+    }
+    setSincronizando(false)
+  }
+
+  const percentual = Math.min((reqHoje / LIMITE) * 100, 100)
+
+  return (
+    <div className="space-y-4">
+      <div className="card">
+        <h4 className="font-semibold flex items-center gap-2 mb-3">
+          <Activity size={16} />
+          Uso da API Hoje
+        </h4>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="flex-1 bg-gray-200 dark:bg-[#2A3942] rounded-full h-3">
+            <div
+              className={`h-3 rounded-full transition-all ${
+                percentual > 90 ? 'bg-red-500' : percentual > 70 ? 'bg-yellow-500' : 'bg-primary'
+              }`}
+              style={{ width: `${percentual}%` }}
+            />
+          </div>
+          <span className="text-sm font-semibold tabular-nums">{reqHoje}/{LIMITE}</span>
+        </div>
+        <p className="text-xs text-gray-500 dark:text-[#8696A0]">
+          {LIMITE - reqHoje} requisições restantes hoje. O cron roda a cada 5 min durante jogos.
+        </p>
+      </div>
+
+      <div className="card">
+        <div className="flex items-center justify-between">
+          <div>
+            <h4 className="font-semibold text-sm">Sincronização Manual</h4>
+            <p className="text-xs text-gray-500 dark:text-[#8696A0]">Forçar sync agora (usa orçamento)</p>
+          </div>
+          <button
+            onClick={forcarSync}
+            disabled={sincronizando || reqHoje >= LIMITE}
+            className="btn-primary flex items-center gap-2 text-sm disabled:opacity-50"
+          >
+            <RefreshCw size={14} className={sincronizando ? 'animate-spin' : ''} />
+            {sincronizando ? 'Sincronizando...' : 'Sincronizar'}
+          </button>
+        </div>
+        {resultado && (
+          <div className={`mt-3 text-sm rounded-lg p-3 ${
+            resultado.ok
+              ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300'
+              : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300'
+          }`}>
+            {resultado.ok ? (
+              resultado.data?.skipped
+                ? `Pulado: ${resultado.data.reason}`
+                : `OK! ${resultado.data.atualizados || 0} atualizados, ${resultado.data.pontosRecalculados || 0} pontos, ${resultado.data.requisicoesHoje || 0}/${LIMITE} req hoje`
+            ) : resultado.msg}
+          </div>
+        )}
+      </div>
+
+      <h4 className="font-semibold text-sm">Histórico de Sincronizações</h4>
+
+      {carregando ? (
+        <div className="flex justify-center py-8">
+          <div className="w-6 h-6 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : logs.length === 0 ? (
+        <p className="text-center text-gray-500 dark:text-[#8696A0] py-6 text-sm">Nenhuma sincronização registrada.</p>
+      ) : (
+        <div className="space-y-2">
+          {logs.map(l => (
+            <div key={l.id} className={`card py-3 ${l.erro ? 'border-red-200 dark:border-red-800' : ''}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${l.erro ? 'bg-red-500' : 'bg-green-500'}`} />
+                    <span className="text-sm font-semibold">{l.tipo}</span>
+                    <span className="text-xs text-gray-400">
+                      {new Date(l.criado_em).toLocaleString('pt-BR')}
+                    </span>
+                  </div>
+                  {l.erro ? (
+                    <p className="text-xs text-red-500 mt-1">{l.erro}</p>
+                  ) : (
+                    <p className="text-xs text-gray-500 dark:text-[#8696A0] mt-1">
+                      {l.requisicoes_api} req API · {l.eventos_processados} eventos · {l.atualizados} atualizados · {l.pontos_recalculados} pontos
+                      {l.backups_gerados > 0 && ` · ${l.backups_gerados} backup(s)`}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 const ABAS = [
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
   { id: 'boloes', label: 'Bolões', icon: Users },
@@ -1206,6 +1344,7 @@ const ABAS = [
   { id: 'financeiro', label: 'Financeiro', icon: DollarSign },
   { id: 'premiacao', label: 'Premiação', icon: Trophy },
   { id: 'placar', label: 'Placar', icon: FileText },
+  { id: 'sync', label: 'Sync', icon: Activity },
   { id: 'backups', label: 'Backups', icon: Database },
 ]
 
@@ -1242,6 +1381,7 @@ export default function Admin() {
         {abaAtiva === 'financeiro' && <AbaFinanceiro />}
         {abaAtiva === 'premiacao' && <AbaPremiacao />}
         {abaAtiva === 'placar' && <AbaPlacar />}
+        {abaAtiva === 'sync' && <AbaSync />}
         {abaAtiva === 'backups' && <AbaBackups />}
       </div>
     </Layout>
