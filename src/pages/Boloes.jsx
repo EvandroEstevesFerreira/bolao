@@ -116,7 +116,7 @@ export default function Boloes() {
                     <div>
                       <h4 className="font-bold">{b.nome}</h4>
                       {b.descricao && <p className="text-sm text-gray-500 mt-1">{b.descricao}</p>}
-                      <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                      <div className="flex items-center gap-3 mt-2 text-xs text-gray-400 dark:text-[#8696A0]">
                         <span className="flex items-center gap-1">
                           <Users size={12} /> {numParticipantes} participantes
                         </span>
@@ -126,7 +126,7 @@ export default function Boloes() {
                       </div>
                     </div>
                     {participa ? (
-                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                      <span className="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400 rounded-full text-xs font-semibold">
                         Participando
                       </span>
                     ) : (

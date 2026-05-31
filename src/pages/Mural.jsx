@@ -108,11 +108,11 @@ export default function Mural() {
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : !bolaoId ? (
-            <div className="card text-center text-gray-500 py-8">
+            <div className="card text-center text-gray-500 dark:text-[#8696A0] py-8">
               <p>Você precisa estar em um bolão para usar o mural.</p>
             </div>
           ) : comentarios.length === 0 ? (
-            <div className="card text-center text-gray-500 py-8">
+            <div className="card text-center text-gray-500 dark:text-[#8696A0] py-8">
               <p>Nenhuma mensagem ainda. Seja o primeiro a zoar!</p>
             </div>
           ) : (
@@ -135,7 +135,7 @@ export default function Mural() {
                         {c.perfis?.nickname || 'Jogador'}
                       </p>
                     )}
-                    <p className="text-sm whitespace-pre-wrap break-words">{c.texto}</p>
+                    <p className="text-sm whitespace-pre-wrap break-words dark:text-[#E9EDEF]">{c.texto}</p>
                     <p className={`text-xs mt-1 ${isMe ? 'text-white/60' : 'text-gray-400'}`}>
                       {formatarHora(c.criado_em)}
                     </p>
@@ -160,7 +160,7 @@ export default function Mural() {
             <button
               type="submit"
               disabled={!texto.trim() || enviando}
-              className="btn-primary px-4"
+              className="btn-primary rounded-full w-12 h-12 flex items-center justify-center p-0"
             >
               <Send size={18} />
             </button>

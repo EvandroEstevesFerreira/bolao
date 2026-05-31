@@ -261,7 +261,7 @@ function SecaoManual({ secao, aberta, onToggle }) {
         className="w-full flex items-center justify-between text-left"
       >
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gray-100 dark:bg-gray-700 ${secao.cor}`}>
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gray-100 dark:bg-[#2A3942] ${secao.cor}`}>
             <Icone size={20} />
           </div>
           <h3 className="font-bold">{secao.titulo}</h3>
@@ -270,11 +270,11 @@ function SecaoManual({ secao, aberta, onToggle }) {
       </button>
 
       {aberta && (
-        <div className="mt-4 space-y-4 border-t border-gray-100 dark:border-gray-700 pt-4">
+        <div className="mt-4 space-y-4 border-t border-gray-100 dark:border-[#2A3942] pt-4">
           {secao.conteudo.map((item, i) => (
             <div key={i}>
               <h4 className="font-semibold text-sm text-primary mb-1">{item.subtitulo}</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed">
+              <p className="text-sm text-gray-600 dark:text-[#D1D7DB] whitespace-pre-line leading-relaxed">
                 {item.texto}
               </p>
             </div>
@@ -315,7 +315,7 @@ export default function Manual() {
     <Layout>
       <div className="max-w-2xl mx-auto space-y-4">
         <div className="flex items-center gap-3">
-          <Link to="/" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+          <Link to="/" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#2A3942]">
             <ArrowLeft size={20} />
           </Link>
           <div className="flex-1">

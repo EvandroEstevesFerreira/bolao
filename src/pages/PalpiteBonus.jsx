@@ -92,20 +92,20 @@ export default function PalpiteBonus() {
           Palpite Bônus
         </h2>
 
-        <div className="card bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-200">
-          <p className="text-sm text-yellow-800">
+        <div className="card bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-200 dark:from-yellow-900/20 dark:to-amber-900/20 dark:border-yellow-800">
+          <p className="text-sm text-yellow-800 dark:text-yellow-200">
             Escolha quem será o <strong>campeão</strong> e o <strong>vice</strong> da Copa 2026.
             Esses palpites valem pontos bônus no final do torneio!
           </p>
-          <div className="mt-2 text-xs text-yellow-700">
+          <div className="mt-2 text-xs text-yellow-700 dark:text-yellow-300">
             Campeão correto: <strong>+20 pts</strong> · Vice correto: <strong>+10 pts</strong>
           </div>
         </div>
 
         {travado && (
-          <div className="card bg-orange-50 border-orange-200 flex items-center gap-2">
-            <Lock size={16} className="text-orange-500" />
-            <p className="text-sm text-orange-700">
+          <div className="card bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800 flex items-center gap-2">
+            <Lock size={16} className="text-orange-500 dark:text-orange-400" />
+            <p className="text-sm text-orange-700 dark:text-orange-300">
               Palpites bônus travados — a Copa já começou.
             </p>
           </div>

@@ -50,12 +50,12 @@ export default function CartaoPartida({ partida, palpite, onSalvarPalpite, selec
         </span>
         <div className="flex items-center gap-1 text-xs">
           {aoVivo && (
-            <span className="bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold animate-pulse">
+            <span className="bg-[#25D366] text-white px-2 py-0.5 rounded-full font-semibold animate-pulse">
               AO VIVO
             </span>
           )}
           {encerrado && (
-            <span className="bg-gray-500 text-white px-2 py-0.5 rounded-full">
+            <span className="bg-gray-200 text-gray-600 dark:bg-[#2A3942] dark:text-[#8696A0] px-2 py-0.5 rounded-full">
               Encerrado
             </span>
           )}
@@ -72,7 +72,7 @@ export default function CartaoPartida({ partida, palpite, onSalvarPalpite, selec
         <div className="flex-1 text-right">
           <div className="flex items-center justify-end gap-2">
             <div>
-              <p className="font-semibold text-sm">{casaInfo?.nome || 'TBD'}</p>
+              <p className="font-semibold text-sm dark:text-[#E9EDEF]">{casaInfo?.nome || 'TBD'}</p>
               <p className="text-xs text-gray-400">{casaInfo?.codigo_fifa || ''}</p>
             </div>
             {casaInfo?.bandeira_url && (
@@ -83,9 +83,9 @@ export default function CartaoPartida({ partida, palpite, onSalvarPalpite, selec
 
         {encerrado || aoVivo ? (
           <div className="flex items-center gap-2 min-w-[100px] justify-center">
-            <span className="text-3xl font-bold">{partida.placar_casa ?? '-'}</span>
+            <span className="text-3xl font-bold tabular-nums">{partida.placar_casa ?? '-'}</span>
             <span className="text-gray-400 text-xl">×</span>
-            <span className="text-3xl font-bold">{partida.placar_fora ?? '-'}</span>
+            <span className="text-3xl font-bold tabular-nums">{partida.placar_fora ?? '-'}</span>
           </div>
         ) : (
           <div className="flex items-center gap-2">
@@ -123,7 +123,7 @@ export default function CartaoPartida({ partida, palpite, onSalvarPalpite, selec
               <img src={foraInfo.bandeira_url} alt="" className="w-8 h-6 rounded object-cover" />
             )}
             <div>
-              <p className="font-semibold text-sm">{foraInfo?.nome || 'TBD'}</p>
+              <p className="font-semibold text-sm dark:text-[#E9EDEF]">{foraInfo?.nome || 'TBD'}</p>
               <p className="text-xs text-gray-400">{foraInfo?.codigo_fifa || ''}</p>
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function CartaoPartida({ partida, palpite, onSalvarPalpite, selec
       </div>
 
       {travado && !encerrado && !aoVivo && (
-        <div className="mt-3 flex items-center justify-center gap-1 text-xs text-orange-500">
+        <div className="mt-3 flex items-center justify-center gap-1 text-xs text-orange-500 dark:text-orange-400">
           <Lock size={12} />
           Palpite travado
         </div>
@@ -153,7 +153,7 @@ export default function CartaoPartida({ partida, palpite, onSalvarPalpite, selec
       )}
 
       {salvo && (
-        <div className="mt-2 flex items-center justify-center gap-1 text-xs text-green-600">
+        <div className="mt-2 flex items-center justify-center gap-1 text-xs text-[#25D366]">
           <Check size={12} />
           Palpite salvo!
         </div>
