@@ -178,12 +178,71 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Backup automático: verificar se alguma rodada completou todos os jogos
+    let backupsGerados = 0
+    if (pontosRecalculados > 0) {
+      const { data: todasPartidas } = await supabase.from('partidas').select('rodada, status')
+      if (todasPartidas) {
+        const porRodada: Record<string, { total: number; encerradas: number }> = {}
+        todasPartidas.forEach((p: any) => {
+          if (!p.rodada) return
+          if (!porRodada[p.rodada]) porRodada[p.rodada] = { total: 0, encerradas: 0 }
+          porRodada[p.rodada].total++
+          if (p.status === 'encerrado') porRodada[p.rodada].encerradas++
+        })
+
+        for (const [rodada, info] of Object.entries(porRodada)) {
+          if (info.total > 0 && info.total === info.encerradas) {
+            const { data: jaExiste } = await supabase
+              .from('backups_rodada')
+              .select('id')
+              .eq('rodada', rodada)
+              .eq('tipo', 'auto')
+              .single()
+
+            if (!jaExiste) {
+              const { data: partidasRod } = await supabase.from('partidas').select('*').eq('rodada', rodada)
+              const partidaIds = (partidasRod || []).map((p: any) => p.id)
+              const { data: palpitesRod } = await supabase.from('palpites').select('*').in('partida_id', partidaIds)
+              const { data: perfis } = await supabase.from('perfis').select('id, nickname').eq('ativo', true)
+              const { data: todosPalpites } = await supabase.from('palpites').select('usuario_id, pontos')
+
+              const rankMap: Record<string, { pontos: number; cravadas: number }> = {}
+              todosPalpites?.forEach((p: any) => {
+                if (!rankMap[p.usuario_id]) rankMap[p.usuario_id] = { pontos: 0, cravadas: 0 }
+                rankMap[p.usuario_id].pontos += p.pontos || 0
+                if (p.pontos === 10) rankMap[p.usuario_id].cravadas++
+              })
+
+              const ranking = (perfis || []).map((p: any) => ({
+                id: p.id, nickname: p.nickname,
+                ...(rankMap[p.id] || { pontos: 0, cravadas: 0 }),
+              })).sort((a: any, b: any) => b.pontos - a.pontos || b.cravadas - a.cravadas)
+
+              await supabase.from('backups_rodada').insert({
+                rodada,
+                tipo: 'auto',
+                partidas: partidasRod || [],
+                palpites: palpitesRod || [],
+                ranking,
+                total_partidas: partidasRod?.length || 0,
+                total_palpites: palpitesRod?.length || 0,
+                total_jogadores: perfis?.length || 0,
+              })
+              backupsGerados++
+            }
+          }
+        }
+      }
+    }
+
     return new Response(
       JSON.stringify({
         ok: true,
         totalEventos,
         atualizados,
         pontosRecalculados,
+        backupsGerados,
       }),
       { headers: { 'Content-Type': 'application/json' } }
     )
