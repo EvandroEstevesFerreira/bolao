@@ -687,6 +687,9 @@ function AbaPremiacao() {
   const [regras, setRegras] = useState([])
   const [novaPos, setNovaPos] = useState('')
   const [novoPerc, setNovoPerc] = useState('')
+  const [erro, setErro] = useState('')
+  const [sucesso, setSucesso] = useState('')
+  const [salvando, setSalvando] = useState(false)
 
   useEffect(() => { carregarBoloes() }, [])
 
@@ -705,22 +708,42 @@ function AbaPremiacao() {
   }
 
   async function adicionarRegra() {
+    setErro(''); setSucesso('')
     const pos = parseInt(novaPos)
     const perc = parseFloat(novoPerc)
-    if (!bolaoId || isNaN(pos) || isNaN(perc)) return
 
-    await supabase.from('premiacao_regras').upsert({
-      bolao_id: bolaoId,
-      posicao: pos,
-      percentual: perc,
-    })
-    setNovaPos(''); setNovoPerc('')
-    carregarRegras(bolaoId)
+    if (!bolaoId) { setErro('Selecione um bolão.'); return }
+    if (isNaN(pos) || pos < 1) { setErro('Posição deve ser um número maior que 0.'); return }
+    if (isNaN(perc) || perc <= 0 || perc > 100) { setErro('Percentual deve estar entre 0.01 e 100.'); return }
+
+    const jaExiste = regras.find(r => r.posicao === pos)
+
+    setSalvando(true)
+    const { error } = jaExiste
+      ? await supabase.from('premiacao_regras').update({ percentual: perc }).eq('bolao_id', bolaoId).eq('posicao', pos)
+      : await supabase.from('premiacao_regras').insert({ bolao_id: bolaoId, posicao: pos, percentual: perc })
+
+    if (error) {
+      setErro(`Erro ao salvar: ${error.message}`)
+    } else {
+      setSucesso(`${pos}º lugar — ${perc}% ${jaExiste ? 'atualizado' : 'adicionado'}!`)
+      setNovaPos(''); setNovoPerc('')
+      carregarRegras(bolaoId)
+      setTimeout(() => setSucesso(''), 3000)
+    }
+    setSalvando(false)
   }
 
   async function removerRegra(posicao) {
-    await supabase.from('premiacao_regras').delete().eq('bolao_id', bolaoId).eq('posicao', posicao)
-    carregarRegras(bolaoId)
+    setErro(''); setSucesso('')
+    const { error } = await supabase.from('premiacao_regras').delete().eq('bolao_id', bolaoId).eq('posicao', posicao)
+    if (error) {
+      setErro(`Erro ao remover: ${error.message}`)
+    } else {
+      setSucesso(`${posicao}º lugar removido.`)
+      carregarRegras(bolaoId)
+      setTimeout(() => setSucesso(''), 3000)
+    }
   }
 
   const totalPerc = regras.reduce((acc, r) => acc + (r.percentual || 0), 0)
@@ -775,12 +798,25 @@ function AbaPremiacao() {
                 value={novoPerc} onChange={e => setNovoPerc(e.target.value)}
                 className="w-24 input-field text-sm"
               />
-              <button onClick={adicionarRegra} className="btn-primary text-sm px-4">Adicionar</button>
+              <button onClick={adicionarRegra} disabled={salvando} className="btn-primary text-sm px-4 disabled:opacity-50">
+                {salvando ? 'Salvando...' : 'Adicionar'}
+              </button>
             </div>
+
+            {erro && (
+              <p className="mt-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg p-2">
+                {erro}
+              </p>
+            )}
+            {sucesso && (
+              <p className="mt-3 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
+                {sucesso}
+              </p>
+            )}
           </div>
 
-          <div className="card bg-yellow-50 border-yellow-200">
-            <p className="text-xs text-yellow-800">
+          <div className="card bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
+            <p className="text-xs text-yellow-800 dark:text-yellow-200">
               O sistema calcula e exibe os valores estimados. A entrega dos prêmios é responsabilidade do organizador.
             </p>
           </div>
