@@ -56,16 +56,18 @@ export default function Conquistas() {
                   conquistado ? 'ring-2 ring-primary shadow-md' : 'opacity-50 grayscale'
                 }`}
               >
-                <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 ${badge.cor}`}>
-                  <Icon size={28} />
+                <div className="relative w-14 h-14 mx-auto mb-2">
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center ${badge.cor}`}>
+                    <Icon size={28} />
+                  </div>
+                  {conquistado && count > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[22px] h-[22px] flex items-center justify-center px-1 bg-[#25D366] text-white rounded-full text-[11px] font-bold shadow-lg ring-2 ring-white dark:ring-[#202C33]">
+                      {count}
+                    </span>
+                  )}
                 </div>
                 <h4 className="font-bold text-sm">{badge.label}</h4>
                 <p className="text-xs text-gray-500 dark:text-[#8696A0] mt-1">{badge.desc}</p>
-                {conquistado && count > 0 && (
-                  <span className="inline-block mt-2 px-2 py-0.5 bg-primary text-white rounded-full text-xs font-bold">
-                    ×{count}
-                  </span>
-                )}
               </div>
             )
           })}
