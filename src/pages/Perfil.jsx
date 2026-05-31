@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { User, Edit3, Save } from 'lucide-react'
 import Layout from '../components/Layout'
+import Figurinha from '../components/Figurinha'
 
 export default function Perfil() {
   const { perfil, atualizarPerfil } = useAuth()
@@ -35,15 +36,11 @@ export default function Perfil() {
       <div className="space-y-6 max-w-md mx-auto">
         <h2 className="text-xl font-bold">Meu Perfil</h2>
 
-        <div className="card text-center">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-[#25D366]/20 dark:from-primary/30 dark:to-[#25D366]/30 flex items-center justify-center mx-auto mb-3 ring-4 ring-primary/10">
-            {perfil.avatar_url ? (
-              <img src={perfil.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
-            ) : (
-              <User size={32} className="text-primary" />
-            )}
-          </div>
+        <div className="card">
+          <Figurinha perfil={perfil} />
+        </div>
 
+        <div className="card text-center">
           {editando ? (
             <div className="space-y-3">
               <div>
