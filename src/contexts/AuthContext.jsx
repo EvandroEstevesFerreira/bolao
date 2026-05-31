@@ -222,15 +222,19 @@ export function AuthProvider({ children }) {
       throw new Error('Convite expirado.')
     }
 
-    if (convite.cpf && convite.cpf !== dadosPerfil.cpf) {
+    if (convite.cpf && dadosPerfil.cpf && convite.cpf !== dadosPerfil.cpf) {
       throw new Error('CPF não corresponde ao convite.')
     }
 
-    const { data: perfilExistente } = await supabase
-      .from('perfis')
-      .select('*')
-      .eq('cpf', dadosPerfil.cpf)
-      .single()
+    let perfilExistente = null
+    if (dadosPerfil.cpf) {
+      const { data } = await supabase
+        .from('perfis')
+        .select('*')
+        .eq('cpf', dadosPerfil.cpf)
+        .single()
+      perfilExistente = data
+    }
 
     let perfilFinal
 
@@ -244,23 +248,25 @@ export function AuthProvider({ children }) {
           avatar_url: dadosPerfil.avatar_url,
           ativo: true,
         })
-        .eq('cpf', dadosPerfil.cpf)
+        .eq('id', perfilExistente.id)
         .select()
         .single()
 
       if (error) throw new Error('Erro ao atualizar perfil.')
       perfilFinal = data
     } else {
+      const insertData = {
+        nome: dadosPerfil.nome,
+        nickname: dadosPerfil.nickname,
+        pin_hash: dadosPerfil.pin,
+        setor_cr: dadosPerfil.setor_cr,
+        avatar_url: dadosPerfil.avatar_url,
+      }
+      if (dadosPerfil.cpf) insertData.cpf = dadosPerfil.cpf
+
       const { data, error } = await supabase
         .from('perfis')
-        .insert({
-          cpf: dadosPerfil.cpf,
-          nome: dadosPerfil.nome,
-          nickname: dadosPerfil.nickname,
-          pin_hash: dadosPerfil.pin,
-          setor_cr: dadosPerfil.setor_cr,
-          avatar_url: dadosPerfil.avatar_url,
-        })
+        .insert(insertData)
         .select()
         .single()
 
