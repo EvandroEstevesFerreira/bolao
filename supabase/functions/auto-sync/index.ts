@@ -77,7 +77,15 @@ async function mapearPartida(event: any): Promise<number | null> {
   return null
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
 Deno.serve(async (_req) => {
+  if (_req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
   try {
     if (!RAPIDAPI_KEY) {
       return respond({ skipped: true, reason: 'RAPIDAPI_KEY não configurada' })
@@ -275,6 +283,6 @@ Deno.serve(async (_req) => {
 function respond(body: any, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
 }
