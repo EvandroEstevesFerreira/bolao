@@ -303,8 +303,17 @@ function AbaPlacar() {
     setSincronizando(true)
     setSyncResult(null)
     try {
-      const { data, error } = await supabase.functions.invoke('sincronizar-resultados')
-      if (error) throw error
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+      const res = await fetch(`${supabaseUrl}/functions/v1/sincronizar-resultados`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${anonKey}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || `Erro ${res.status}`)
       setSyncResult({ ok: true, ...data })
       carregarDados()
     } catch (err) {
@@ -1229,9 +1238,18 @@ function AbaSync() {
     setSincronizando(true)
     setResultado(null)
     try {
-      const { data, error } = await supabase.functions.invoke('auto-sync')
-      if (error) {
-        setResultado({ ok: false, msg: error.message })
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+      const res = await fetch(`${supabaseUrl}/functions/v1/auto-sync`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${anonKey}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setResultado({ ok: false, msg: data.error || `Erro ${res.status}` })
       } else {
         setResultado({ ok: true, data })
         carregarLogs()
