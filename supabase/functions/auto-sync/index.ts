@@ -46,6 +46,27 @@ async function fetchRound(round: number) {
   return data.events || []
 }
 
+const NOMES_PTBR: Record<string, string> = {
+  'Mexico': 'México', 'South Africa': 'África do Sul', 'South Korea': 'Coreia do Sul',
+  'Czechia': 'Tchéquia', 'Canada': 'Canadá', 'Bosnia & Herzegovina': 'Bósnia e Herzegovina',
+  'Qatar': 'Catar', 'Switzerland': 'Suíça', 'Brazil': 'Brasil', 'Morocco': 'Marrocos',
+  'Scotland': 'Escócia', 'USA': 'Estados Unidos', 'Paraguay': 'Paraguai',
+  'Australia': 'Austrália', 'Türkiye': 'Turquia', 'Germany': 'Alemanha',
+  'Curaçao': 'Curaçao', "Côte d'Ivoire": 'Costa do Marfim', 'Ecuador': 'Equador',
+  'Netherlands': 'Holanda', 'Japan': 'Japão', 'Sweden': 'Suécia', 'Tunisia': 'Tunísia',
+  'Belgium': 'Bélgica', 'Egypt': 'Egito', 'Iran': 'Irã', 'New Zealand': 'Nova Zelândia',
+  'Spain': 'Espanha', 'Cabo Verde': 'Cabo Verde', 'Saudi Arabia': 'Arábia Saudita',
+  'Uruguay': 'Uruguai', 'France': 'França', 'Senegal': 'Senegal', 'Iraq': 'Iraque',
+  'Norway': 'Noruega', 'Argentina': 'Argentina', 'Algeria': 'Argélia', 'Austria': 'Áustria',
+  'Jordan': 'Jordânia', 'Portugal': 'Portugal', 'DR Congo': 'RD Congo',
+  'Uzbekistan': 'Uzbequistão', 'Colombia': 'Colômbia', 'England': 'Inglaterra',
+  'Croatia': 'Croácia', 'Ghana': 'Gana', 'Panama': 'Panamá', 'Haiti': 'Haiti',
+}
+
+function traduzirNome(nome: string): string {
+  return NOMES_PTBR[nome] || nome
+}
+
 async function mapearPartida(event: any): Promise<number | null> {
   const { data: partida } = await supabase
     .from('partidas')
@@ -56,9 +77,9 @@ async function mapearPartida(event: any): Promise<number | null> {
   if (partida) return partida.id
 
   const { data: selCasa } = await supabase
-    .from('selecoes').select('id').eq('nome', event.homeTeam?.name).single()
+    .from('selecoes').select('id').eq('nome', traduzirNome(event.homeTeam?.name || '')).single()
   const { data: selFora } = await supabase
-    .from('selecoes').select('id').eq('nome', event.awayTeam?.name).single()
+    .from('selecoes').select('id').eq('nome', traduzirNome(event.awayTeam?.name || '')).single()
 
   if (!selCasa || !selFora) return null
 
