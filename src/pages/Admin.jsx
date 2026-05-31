@@ -11,6 +11,7 @@ import {
 import Layout from '../components/Layout'
 
 function AbaUsuarios() {
+  const { perfil } = useAuth()
   const [usuarios, setUsuarios] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [novoCpf, setNovoCpf] = useState('')
@@ -109,7 +110,26 @@ function AbaUsuarios() {
   }
 
   async function toggleAdmin(usuario) {
-    await supabase.from('perfis').update({ is_admin: !usuario.is_admin }).eq('id', usuario.id)
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/toggle-admin`
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({
+          usuario_id: usuario.id,
+          is_admin: !usuario.is_admin,
+          admin_id: perfil.id,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) { alert(data.error || 'Erro ao alterar admin'); return }
+    } catch {
+      alert('Erro de conexão')
+      return
+    }
     carregarUsuarios()
   }
 
