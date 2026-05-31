@@ -39,6 +39,16 @@
   html.dark tr { border-color: #2A3942; }
 }
 
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer components {
   .btn-primary {
     @apply bg-primary text-white px-6 py-3 rounded-xl font-semibold

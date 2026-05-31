@@ -114,7 +114,7 @@ export default function Palpites() {
           </span>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
           {FASES.map(fase => (
             <button
               key={fase.value}
@@ -127,7 +127,7 @@ export default function Palpites() {
         </div>
 
         {faseAtiva === 'grupos' && (
-          <div className="flex gap-1.5 overflow-x-auto pb-2">
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-2">
             <button
               onClick={() => setGrupoAtivo(null)}
               className={`chip text-xs py-1.5 px-3 ${!grupoAtivo ? 'chip-active' : 'chip-inactive'}`}
