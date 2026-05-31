@@ -7,8 +7,34 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [perfil, setPerfil] = useState(null)
   const [carregando, setCarregando] = useState(true)
+  const [precisaVincular, setPrecisaVincular] = useState(false)
 
   useEffect(() => {
+    inicializar()
+  }, [])
+
+  async function inicializar() {
+    // 1. Verificar sessão Supabase Auth
+    const { data: { session } } = await supabase.auth.getSession()
+
+    if (session?.user) {
+      const { data: perfilAuth } = await supabase
+        .from('perfis')
+        .select('*')
+        .eq('auth_uid', session.user.id)
+        .eq('ativo', true)
+        .single()
+
+      if (perfilAuth) {
+        const { pin_hash: _, ...seguro } = perfilAuth
+        setPerfil(seguro)
+        localStorage.setItem('bolao_perfil', JSON.stringify(seguro))
+        setCarregando(false)
+        return
+      }
+    }
+
+    // 2. Fallback: localStorage (legado CPF+PIN)
     const perfilSalvo = localStorage.getItem('bolao_perfil')
     if (perfilSalvo) {
       try {
@@ -18,8 +44,55 @@ export function AuthProvider({ children }) {
       }
     }
     setCarregando(false)
-  }, [])
 
+    // 3. Listener para mudanças de auth (magic link callback)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        const user = session.user
+
+        // Buscar perfil vinculado
+        let { data: perfilAuth } = await supabase
+          .from('perfis')
+          .select('*')
+          .eq('auth_uid', user.id)
+          .eq('ativo', true)
+          .single()
+
+        // Se não achou por auth_uid, tentar por email
+        if (!perfilAuth && user.email) {
+          const { data: perfilEmail } = await supabase
+            .from('perfis')
+            .select('*')
+            .eq('email', user.email)
+            .eq('ativo', true)
+            .single()
+
+          if (perfilEmail) {
+            await supabase
+              .from('perfis')
+              .update({ auth_uid: user.id })
+              .eq('id', perfilEmail.id)
+            perfilAuth = perfilEmail
+          }
+        }
+
+        if (perfilAuth) {
+          const { pin_hash: _, ...seguro } = perfilAuth
+          setPerfil(seguro)
+          localStorage.setItem('bolao_perfil', JSON.stringify(seguro))
+        }
+      }
+
+      if (event === 'SIGNED_OUT') {
+        setPerfil(null)
+        localStorage.removeItem('bolao_perfil')
+      }
+    })
+
+    return () => subscription?.unsubscribe()
+  }
+
+  // Login legado CPF + PIN
   async function login(cpf, pin) {
     const { data, error } = await supabase
       .from('perfis')
@@ -52,7 +125,84 @@ export function AuthProvider({ children }) {
     const { pin_hash: _, ...perfilSeguro } = data
     localStorage.setItem('bolao_perfil', JSON.stringify(perfilSeguro))
     setPerfil(perfilSeguro)
+
+    // Verificar se precisa vincular email/telefone
+    if (!data.email && !data.telefone) {
+      setPrecisaVincular(true)
+    }
+
     return perfilSeguro
+  }
+
+  // Login por E-mail Magic Link
+  async function loginEmail(email) {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`,
+      },
+    })
+
+    if (error) throw new Error(error.message)
+    return { enviado: true }
+  }
+
+  // Login por WhatsApp OTP
+  async function enviarOtpWhatsApp(telefone) {
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/whatsapp-otp`
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ action: 'enviar', telefone }),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Erro ao enviar código')
+    return data
+  }
+
+  async function verificarOtpWhatsApp(telefone, codigo) {
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/whatsapp-otp`
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ action: 'verificar', telefone, codigo }),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Erro ao verificar código')
+
+    if (data.perfil) {
+      localStorage.setItem('bolao_perfil', JSON.stringify(data.perfil))
+      setPerfil(data.perfil)
+    }
+
+    return data
+  }
+
+  // Vincular email ou telefone ao perfil existente
+  async function vincularContato(tipo, valor) {
+    if (!perfil) throw new Error('Não autenticado')
+
+    const campo = tipo === 'email' ? 'email' : 'telefone'
+    const { error } = await supabase
+      .from('perfis')
+      .update({ [campo]: valor })
+      .eq('id', perfil.id)
+
+    if (error) {
+      if (error.code === '23505') throw new Error(`${tipo === 'email' ? 'E-mail' : 'Telefone'} já cadastrado por outro usuário.`)
+      throw new Error('Erro ao vincular contato.')
+    }
+
+    const novoPerfil = { ...perfil, [campo]: valor }
+    localStorage.setItem('bolao_perfil', JSON.stringify(novoPerfil))
+    setPerfil(novoPerfil)
+    setPrecisaVincular(false)
   }
 
   async function resgatarConvite(token, dadosOriginal) {
@@ -137,9 +287,11 @@ export function AuthProvider({ children }) {
     return perfilSeguro
   }
 
-  function logout() {
+  async function logout() {
+    await supabase.auth.signOut().catch(() => {})
     localStorage.removeItem('bolao_perfil')
     setPerfil(null)
+    setPrecisaVincular(false)
   }
 
   async function atualizarPerfil(dados) {
@@ -151,14 +303,19 @@ export function AuthProvider({ children }) {
       .single()
 
     if (error) throw new Error('Erro ao atualizar perfil.')
-    localStorage.setItem('bolao_perfil', JSON.stringify(data))
-    setPerfil(data)
-    return data
+    const { pin_hash: _, ...seguro } = data
+    localStorage.setItem('bolao_perfil', JSON.stringify(seguro))
+    setPerfil(seguro)
+    return seguro
   }
 
   return (
     <AuthContext.Provider
-      value={{ perfil, carregando, login, logout, resgatarConvite, atualizarPerfil }}
+      value={{
+        perfil, carregando, precisaVincular,
+        login, loginEmail, enviarOtpWhatsApp, verificarOtpWhatsApp,
+        vincularContato, logout, resgatarConvite, atualizarPerfil,
+      }}
     >
       {children}
     </AuthContext.Provider>
