@@ -1377,7 +1377,7 @@ export default function Admin() {
           Painel Administrativo
         </h2>
 
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
           {ABAS.map(aba => (
             <button
               key={aba.id}

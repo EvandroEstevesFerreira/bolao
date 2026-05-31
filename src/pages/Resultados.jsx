@@ -69,7 +69,7 @@ export default function Resultados() {
           </div>
         )}
 
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
           {[
             { v: 'todos', l: 'Todos' },
             { v: 'ao_vivo', l: 'Ao Vivo' },

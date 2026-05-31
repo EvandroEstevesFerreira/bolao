@@ -105,7 +105,7 @@ export default function Layout({ children }) {
         )}
 
         <div className="hidden sm:block border-t border-white/8">
-          <div className="max-w-5xl mx-auto px-4 flex gap-1 overflow-x-auto">
+          <div className="max-w-5xl mx-auto px-4 flex gap-1 overflow-x-auto scrollbar-hide">
             {menuItems.map(({ path, label, icon: Icon }) => (
               <Link
                 key={path}

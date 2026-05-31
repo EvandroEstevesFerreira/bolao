@@ -127,7 +127,7 @@ export default function Ranking() {
       <div className="space-y-4">
         <h2 className="text-xl font-bold">Ranking</h2>
 
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
           <button
             onClick={() => setFiltro('geral')}
             className={`chip ${filtro === 'geral' ? 'chip-active' : 'chip-inactive'}`}
