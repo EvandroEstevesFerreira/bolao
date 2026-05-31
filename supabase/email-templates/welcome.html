@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bem-vindo ao Bolão Copa 2026!</title>
+</head>
+<body style="margin:0; padding:0; background-color:#111B21; font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#111B21; padding:30px 15px;">
+    <tr>
+      <td align="center">
+        <table width="100%" style="max-width:480px; background-color:#202C33; border-radius:20px; overflow:hidden; border:1px solid #2A3942;">
+
+          <!-- Header verde -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #075E54, #00A884); padding:30px 24px; text-align:center;">
+              <div style="font-size:48px; margin-bottom:8px;">⚽🏆</div>
+              <h1 style="color:#FFFFFF; font-size:22px; font-weight:800; margin:0; letter-spacing:-0.5px;">
+                Bolão Copa 2026
+              </h1>
+              <p style="color:rgba(255,255,255,0.7); font-size:12px; margin:6px 0 0; letter-spacing:3px; text-transform:uppercase;">
+                USA • MEX • CAN
+              </p>
+            </td>
+          </tr>
+
+          <!-- Mensagem principal -->
+          <tr>
+            <td style="padding:28px 24px 0;">
+              <h2 style="color:#E9EDEF; font-size:20px; font-weight:700; margin:0 0 8px;">
+                Cadastro confirmado! 🎉
+              </h2>
+              <p style="color:#8696A0; font-size:14px; line-height:1.6; margin:0 0 20px;">
+                Seu cadastro no <strong style="color:#00A884;">Bolão Copa 2026</strong> foi realizado com sucesso.
+                Agora é hora de fazer seus palpites e disputar o topo do ranking!
+              </p>
+            </td>
+          </tr>
+
+          <!-- Card de dados -->
+          <tr>
+            <td style="padding:0 24px;">
+              <table width="100%" style="background-color:#1A2329; border-radius:14px; border:1px solid #2A3942; overflow:hidden;">
+                <tr>
+                  <td style="padding:16px 20px; border-bottom:1px solid #2A3942;">
+                    <p style="color:#8696A0; font-size:10px; text-transform:uppercase; letter-spacing:2px; margin:0 0 4px;">Seus dados</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 20px;">
+                    <table width="100%">
+                      <tr>
+                        <td style="padding:6px 0; color:#8696A0; font-size:12px; width:90px;">Nome</td>
+                        <td style="padding:6px 0; color:#E9EDEF; font-size:13px; font-weight:600;">{{ .Name }}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; color:#8696A0; font-size:12px; border-top:1px solid #2A3942;">E-mail</td>
+                        <td style="padding:6px 0; color:#E9EDEF; font-size:13px; font-weight:600; border-top:1px solid #2A3942;">{{ .Email }}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- CTA Button -->
+          <tr>
+            <td style="padding:24px 24px 0; text-align:center;">
+              <a href="{{ .SiteURL }}"
+                 style="display:inline-block; background:linear-gradient(135deg,#00A884,#075E54); color:#FFFFFF;
+                        text-decoration:none; padding:14px 40px; border-radius:14px; font-size:15px;
+                        font-weight:700; letter-spacing:0.3px;">
+                🎯 Fazer Meus Palpites
+              </a>
+            </td>
+          </tr>
+
+          <!-- Dicas -->
+          <tr>
+            <td style="padding:24px 24px 0;">
+              <table width="100%" style="background-color:#1A2329; border-radius:14px; border:1px solid #2A3942;">
+                <tr>
+                  <td style="padding:16px 20px;">
+                    <p style="color:#00A884; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin:0 0 12px;">
+                      💡 Dicas para começar
+                    </p>
+                    <table width="100%">
+                      <tr>
+                        <td style="padding:4px 0; vertical-align:top; width:24px;">
+                          <span style="color:#25D366; font-size:14px;">✓</span>
+                        </td>
+                        <td style="padding:4px 0; color:#D1D7DB; font-size:13px; line-height:1.5;">
+                          Preencha seus palpites <strong style="color:#E9EDEF;">antes do início</strong> de cada partida
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:4px 0; vertical-align:top;">
+                          <span style="color:#25D366; font-size:14px;">✓</span>
+                        </td>
+                        <td style="padding:4px 0; color:#D1D7DB; font-size:13px; line-height:1.5;">
+                          Placar exato = <strong style="color:#FFD700;">10 pontos</strong> (cravada!)
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:4px 0; vertical-align:top;">
+                          <span style="color:#25D366; font-size:14px;">✓</span>
+                        </td>
+                        <td style="padding:4px 0; color:#D1D7DB; font-size:13px; line-height:1.5;">
+                          Acompanhe o ranking em <strong style="color:#E9EDEF;">tempo real</strong>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:4px 0; vertical-align:top;">
+                          <span style="color:#25D366; font-size:14px;">✓</span>
+                        </td>
+                        <td style="padding:4px 0; color:#D1D7DB; font-size:13px; line-height:1.5;">
+                          Conquiste badges e <strong style="color:#E9EDEF;">compartilhe</strong> sua figurinha
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Pontuação -->
+          <tr>
+            <td style="padding:20px 24px 0;">
+              <table width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td style="background:#1A2329; border-radius:12px; padding:12px; text-align:center; border:1px solid #2A3942; width:25%;">
+                    <p style="color:#FFD700; font-size:20px; font-weight:800; margin:0;">10</p>
+                    <p style="color:#8696A0; font-size:9px; text-transform:uppercase; letter-spacing:1px; margin:4px 0 0;">Cravada</p>
+                  </td>
+                  <td style="width:6px;"></td>
+                  <td style="background:#1A2329; border-radius:12px; padding:12px; text-align:center; border:1px solid #2A3942; width:25%;">
+                    <p style="color:#25D366; font-size:20px; font-weight:800; margin:0;">7</p>
+                    <p style="color:#8696A0; font-size:9px; text-transform:uppercase; letter-spacing:1px; margin:4px 0 0;">Quase lá</p>
+                  </td>
+                  <td style="width:6px;"></td>
+                  <td style="background:#1A2329; border-radius:12px; padding:12px; text-align:center; border:1px solid #2A3942; width:25%;">
+                    <p style="color:#00A884; font-size:20px; font-weight:800; margin:0;">5</p>
+                    <p style="color:#8696A0; font-size:9px; text-transform:uppercase; letter-spacing:1px; margin:4px 0 0;">Vencedor</p>
+                  </td>
+                  <td style="width:6px;"></td>
+                  <td style="background:#1A2329; border-radius:12px; padding:12px; text-align:center; border:1px solid #2A3942; width:25%;">
+                    <p style="color:#8696A0; font-size:20px; font-weight:800; margin:0;">2</p>
+                    <p style="color:#8696A0; font-size:9px; text-transform:uppercase; letter-spacing:1px; margin:4px 0 0;">1 placar</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:28px 24px; text-align:center;">
+              <p style="color:#8696A0; font-size:11px; margin:0 0 4px;">
+                Bora pro jogo! ⚽🏆
+              </p>
+              <p style="color:#3B4A54; font-size:10px; margin:0;">
+                Este e-mail foi enviado porque você se cadastrou no Bolão Copa 2026.
+              </p>
+              <p style="color:#3B4A54; font-size:10px; margin:6px 0 0;">
+                bolao-bay.vercel.app
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
