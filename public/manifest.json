@@ -4,8 +4,8 @@
   "description": "Palpites e ranking da Copa do Mundo 2026",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0F0E17",
-  "theme_color": "#6366F1",
+  "background_color": "#111B21",
+  "theme_color": "#075E54",
   "icons": [
     {
       "src": "/icon-192.png",

@@ -5,12 +5,12 @@ import { Award, Star, Flame, Eye, Target, TrendingDown, Zap } from 'lucide-react
 import Layout from '../components/Layout'
 
 const BADGES = {
-  cravada: { label: 'Cravada', desc: 'Acertou o placar exato', icon: Target, cor: 'text-yellow-500 bg-yellow-50' },
-  vidente: { label: 'Vidente', desc: '3 cravadas no torneio', icon: Eye, cor: 'text-teal-600 bg-teal-50' },
-  pe_quente: { label: 'Pé Quente', desc: '5 vencedores seguidos', icon: Flame, cor: 'text-orange-500 bg-orange-50' },
-  rodada_perfeita: { label: 'Rodada Perfeita', desc: 'Acertou todos da rodada', icon: Star, cor: 'text-green-500 bg-green-50' },
-  zebra: { label: 'Zebra', desc: 'Acertou um resultado improvável', icon: Zap, cor: 'text-blue-500 bg-blue-50' },
-  lanterna: { label: 'Lanterna', desc: 'Último colocado (com carinho)', icon: TrendingDown, cor: 'text-gray-400 bg-gray-50' },
+  cravada: { label: 'Cravada', desc: 'Acertou o placar exato', icon: Target, cor: 'text-yellow-500 bg-yellow-50 dark:bg-yellow-500/10' },
+  vidente: { label: 'Vidente', desc: '3 cravadas no torneio', icon: Eye, cor: 'text-teal-600 bg-teal-50 dark:bg-teal-500/10' },
+  pe_quente: { label: 'Pé Quente', desc: '5 vencedores seguidos', icon: Flame, cor: 'text-orange-500 bg-orange-50 dark:bg-orange-500/10' },
+  rodada_perfeita: { label: 'Rodada Perfeita', desc: 'Acertou todos da rodada', icon: Star, cor: 'text-green-500 bg-green-50 dark:bg-green-500/10' },
+  zebra: { label: 'Zebra', desc: 'Acertou um resultado improvável', icon: Zap, cor: 'text-blue-500 bg-blue-50 dark:bg-blue-500/10' },
+  lanterna: { label: 'Lanterna', desc: 'Último colocado (com carinho)', icon: TrendingDown, cor: 'text-gray-400 bg-gray-50 dark:bg-[#2A3942]' },
 }
 
 export default function Conquistas() {
@@ -60,7 +60,7 @@ export default function Conquistas() {
                   <Icon size={28} />
                 </div>
                 <h4 className="font-bold text-sm">{badge.label}</h4>
-                <p className="text-xs text-gray-500 mt-1">{badge.desc}</p>
+                <p className="text-xs text-gray-500 dark:text-[#8696A0] mt-1">{badge.desc}</p>
                 {conquistado && count > 0 && (
                   <span className="inline-block mt-2 px-2 py-0.5 bg-primary text-white rounded-full text-xs font-bold">
                     ×{count}
@@ -78,7 +78,7 @@ export default function Conquistas() {
               <div className="w-6 h-6 border-3 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : todosUsuarios.length === 0 ? (
-            <p className="text-center text-gray-500 py-4">Nenhuma conquista desbloqueada ainda.</p>
+            <p className="text-center text-gray-500 dark:text-[#8696A0] py-4">Nenhuma conquista desbloqueada ainda.</p>
           ) : (
             <div className="space-y-2">
               {todosUsuarios.map((c, i) => {
@@ -92,7 +92,7 @@ export default function Conquistas() {
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-semibold">{c.perfis?.nickname || 'Jogador'}</p>
-                      <p className="text-xs text-gray-500">{badge.label}</p>
+                      <p className="text-xs text-gray-500 dark:text-[#8696A0]">{badge.label}</p>
                     </div>
                   </div>
                 )
