@@ -1,18 +1,16 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { validarCPF, formatarCPF, limparCPF } from '../lib/cpf'
-import { MessageCircle, Mail, KeyRound } from 'lucide-react'
+import { MessageCircle, Mail } from 'lucide-react'
 
 const ABAS = [
   { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle },
   { id: 'email', label: 'E-mail', icon: Mail },
-  { id: 'cpf', label: 'CPF', icon: KeyRound },
 ]
 
 export default function Login() {
   const [aba, setAba] = useState('whatsapp')
-  const { login, loginEmail, enviarOtpWhatsApp, verificarOtpWhatsApp } = useAuth()
+  const { loginEmail, enviarOtpWhatsApp, verificarOtpWhatsApp } = useAuth()
   const navigate = useNavigate()
 
   return (
@@ -57,7 +55,6 @@ export default function Login() {
 
         {aba === 'whatsapp' && <LoginWhatsApp navigate={navigate} />}
         {aba === 'email' && <LoginEmailMagicLink navigate={navigate} />}
-        {aba === 'cpf' && <LoginCPF navigate={navigate} />}
 
         <p className="animate-fade-in text-center text-[#8696A0] text-sm mt-4" style={{ animationDelay: '0.7s' }}>
           Recebeu um link de convite?{' '}
@@ -270,83 +267,3 @@ function LoginEmailMagicLink({ navigate }) {
   )
 }
 
-function LoginCPF({ navigate }) {
-  const [cpf, setCpf] = useState('')
-  const [pin, setPin] = useState('')
-  const [erro, setErro] = useState('')
-  const [carregando, setCarregando] = useState(false)
-  const { login } = useAuth()
-
-  function handleCpfChange(e) {
-    const raw = limparCPF(e.target.value)
-    if (raw.length <= 11) {
-      setCpf(raw.length > 3 ? formatarCPF(raw) : raw)
-    }
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault()
-    setErro('')
-
-    const cpfLimpo = limparCPF(cpf)
-    if (!validarCPF(cpfLimpo)) {
-      setErro('CPF inválido.')
-      return
-    }
-
-    setCarregando(true)
-    try {
-      await login(cpfLimpo, pin)
-      navigate('/')
-    } catch (err) {
-      setErro(err.message)
-    } finally {
-      setCarregando(false)
-    }
-  }
-
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="animate-slide-up space-y-4 bg-[#202C33] rounded-2xl p-6 border border-[#2A3942]"
-      style={{ animationDelay: '0.5s' }}
-    >
-      <div className="text-center mb-2">
-        <KeyRound size={32} className="text-[#F59E0B] mx-auto mb-2" />
-        <p className="text-sm text-[#D1D7DB]">Acesso com CPF e PIN</p>
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">CPF</label>
-        <input
-          type="text"
-          value={cpf}
-          onChange={handleCpfChange}
-          placeholder="000.000.000-00"
-          className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-          inputMode="numeric"
-          autoComplete="off"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">PIN</label>
-        <input
-          type="password"
-          value={pin}
-          onChange={(e) => setPin(e.target.value)}
-          placeholder="Seu PIN de 4 dígitos"
-          className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-          maxLength={6}
-          inputMode="numeric"
-          autoComplete="off"
-        />
-      </div>
-
-      {erro && <p className="text-red-400 text-sm text-center animate-fade-in">{erro}</p>}
-
-      <button type="submit" disabled={carregando} className="btn-primary btn-glow w-full">
-        {carregando ? 'Entrando...' : 'Entrar'}
-      </button>
-    </form>
-  )
-}

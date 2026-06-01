@@ -20,7 +20,6 @@ async function chamarEdgeFunction(nome, body) {
 export function AuthProvider({ children }) {
   const [perfil, setPerfil] = useState(null)
   const [carregando, setCarregando] = useState(true)
-  const [precisaVincular, setPrecisaVincular] = useState(false)
 
   useEffect(() => {
     inicializar()
@@ -88,29 +87,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function login(cpf, pin) {
-    const data = await chamarEdgeFunction('login-cpf', { cpf, pin })
-
-    if (data.token_hash) {
-      const { error: verifyError } = await supabase.auth.verifyOtp({
-        type: 'magiclink',
-        token_hash: data.token_hash,
-      })
-      if (verifyError) throw new Error('Erro ao estabelecer sessão: ' + verifyError.message)
-    }
-
-    if (data.perfil) {
-      setPerfil(data.perfil)
-      localStorage.setItem('bolao_perfil', JSON.stringify(data.perfil))
-    }
-
-    if (data.precisa_vincular) {
-      setPrecisaVincular(true)
-    }
-
-    return data.perfil
-  }
-
   async function loginEmail(email) {
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -135,33 +111,11 @@ export function AuthProvider({ children }) {
     return data
   }
 
-  async function vincularContato(tipo, valor) {
-    if (!perfil) throw new Error('Não autenticado')
-
-    const campo = tipo === 'email' ? 'email' : 'telefone'
-    const { error } = await supabase
-      .from('perfis')
-      .update({ [campo]: valor })
-      .eq('id', perfil.id)
-
-    if (error) {
-      if (error.code === '23505') throw new Error(`${tipo === 'email' ? 'E-mail' : 'Telefone'} já cadastrado por outro usuário.`)
-      throw new Error('Erro ao vincular contato.')
-    }
-
-    const novoPerfil = { ...perfil, [campo]: valor }
-    localStorage.setItem('bolao_perfil', JSON.stringify(novoPerfil))
-    setPerfil(novoPerfil)
-    setPrecisaVincular(false)
-  }
-
   async function resgatarConvite(token, dadosOriginal) {
     const data = await chamarEdgeFunction('registro', {
       token,
       nome: dadosOriginal.nome,
       nickname: dadosOriginal.nickname,
-      pin: dadosOriginal.pin,
-      cpf: dadosOriginal.cpf || null,
       setor_cr: dadosOriginal.setor_cr || null,
       avatar_url: dadosOriginal.avatar_url || null,
     })
@@ -185,7 +139,6 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut().catch(() => {})
     localStorage.removeItem('bolao_perfil')
     setPerfil(null)
-    setPrecisaVincular(false)
   }
 
   async function atualizarPerfil(dados) {
@@ -205,9 +158,9 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        perfil, carregando, precisaVincular,
-        login, loginEmail, enviarOtpWhatsApp, verificarOtpWhatsApp,
-        vincularContato, logout, resgatarConvite, atualizarPerfil,
+        perfil, carregando,
+        loginEmail, enviarOtpWhatsApp, verificarOtpWhatsApp,
+        logout, resgatarConvite, atualizarPerfil,
       }}
     >
       {children}
