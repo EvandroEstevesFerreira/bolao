@@ -95,7 +95,7 @@ export default function Figurinha({ perfil }) {
   async function carregarStats() {
     const [palpitesRes, , conquistasRes] = await Promise.all([
       supabase.from('palpites').select('usuario_id, pontos'),
-      supabase.from('perfis').select('id').eq('ativo', true),
+      supabase.from('perfis_publicos').select('id').eq('ativo', true),
       supabase.from('conquistas').select('id').eq('usuario_id', perfil.id),
     ])
 

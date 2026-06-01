@@ -60,13 +60,28 @@ export default function Mural() {
 
   async function carregarComentarios() {
     if (!bolaoId) return
-    const { data } = await supabase
+    const { data: rawComentarios } = await supabase
       .from('comentarios')
-      .select('*, perfis(nickname, avatar_url)')
+      .select('*')
       .eq('bolao_id', bolaoId)
       .order('criado_em', { ascending: true })
       .limit(100)
-    setComentarios(data || [])
+
+    const userIds = [...new Set((rawComentarios || []).map(c => c.usuario_id))]
+    let userMap = {}
+    if (userIds.length > 0) {
+      const { data: usuarios } = await supabase
+        .from('perfis_publicos')
+        .select('id, nickname, avatar_url')
+        .in('id', userIds)
+      usuarios?.forEach(u => { userMap[u.id] = u })
+    }
+
+    const data = (rawComentarios || []).map(c => ({
+      ...c,
+      perfis: userMap[c.usuario_id] || { nickname: 'Jogador', avatar_url: null },
+    }))
+    setComentarios(data)
   }
 
   async function enviarComentario(e) {
