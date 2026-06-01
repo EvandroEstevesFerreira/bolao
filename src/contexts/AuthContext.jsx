@@ -26,35 +26,31 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function inicializar() {
-    const { data: { session } } = await supabase.auth.getSession()
-
-    if (session?.user) {
-      await carregarPerfilAuth(session.user)
-      setCarregando(false)
-
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          await carregarPerfilAuth(session.user)
-        }
-        if (event === 'SIGNED_OUT') {
-          setPerfil(null)
-          localStorage.removeItem('bolao_perfil')
-        }
-      })
-      return () => subscription?.unsubscribe()
+    // PKCE: troca o ?code= da URL por sessão (magic link redirect)
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+    if (code) {
+      await supabase.auth.exchangeCodeForSession(code)
+      window.history.replaceState({}, '', window.location.pathname)
     }
 
-    setCarregando(false)
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
         await carregarPerfilAuth(session.user)
-      }
-      if (event === 'SIGNED_OUT') {
+        setCarregando(false)
+      } else if (event === 'SIGNED_OUT') {
         setPerfil(null)
         localStorage.removeItem('bolao_perfil')
+        setCarregando(false)
+      } else if (event === 'INITIAL_SESSION' && !session) {
+        setCarregando(false)
       }
     })
+
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      setCarregando(false)
+    }
 
     return () => subscription?.unsubscribe()
   }
