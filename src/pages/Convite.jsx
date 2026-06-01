@@ -1,46 +1,31 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { validarCPF, formatarCPF, limparCPF } from '../lib/cpf'
 
 export default function Convite() {
   const [searchParams] = useSearchParams()
   const [token, setToken] = useState(searchParams.get('token') || '')
-  const [cpf, setCpf] = useState('')
   const [nome, setNome] = useState('')
   const [nickname, setNickname] = useState('')
-  const [pin, setPin] = useState('')
-  const [pinConfirm, setPinConfirm] = useState('')
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(false)
   const { resgatarConvite } = useAuth()
   const navigate = useNavigate()
 
-  function handleCpfChange(e) {
-    const raw = limparCPF(e.target.value)
-    if (raw.length <= 11) setCpf(raw.length > 3 ? formatarCPF(raw) : raw)
-  }
-
   async function handleSubmit(e) {
     e.preventDefault()
     setErro('')
 
-    const cpfLimpo = limparCPF(cpf)
-    if (cpfLimpo && !validarCPF(cpfLimpo)) { setErro('CPF inválido.'); return }
     if (!nome.trim()) { setErro('Informe seu nome completo.'); return }
     if (!nickname.trim()) { setErro('Escolha um apelido.'); return }
     if (nickname.trim().length < 3) { setErro('Apelido deve ter pelo menos 3 caracteres.'); return }
-    if (!pin || pin.length < 4) { setErro('PIN deve ter pelo menos 4 dígitos.'); return }
-    if (pin !== pinConfirm) { setErro('PINs não conferem.'); return }
     if (!token.trim()) { setErro('Token de convite é obrigatório.'); return }
 
     setCarregando(true)
     try {
       await resgatarConvite(token.trim(), {
-        cpf: cpfLimpo || null,
         nome: nome.trim(),
         nickname: nickname.trim(),
-        pin,
         setor_cr: null,
         avatar_url: null,
       })
@@ -82,13 +67,6 @@ export default function Convite() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">CPF <span className="text-[#8696A0] font-normal">(opcional)</span></label>
-            <input type="text" value={cpf} onChange={handleCpfChange} placeholder="000.000.000-00"
-              className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-              inputMode="numeric" />
-          </div>
-
-          <div>
             <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">Nome completo</label>
             <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Seu nome"
               className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" />
@@ -100,21 +78,6 @@ export default function Convite() {
               placeholder="Como você quer aparecer no ranking"
               className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
               maxLength={20} />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">PIN</label>
-              <input type="password" value={pin} onChange={(e) => setPin(e.target.value)} placeholder="4+ dígitos"
-                className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                maxLength={6} inputMode="numeric" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[#D1D7DB] mb-1.5">Confirmar PIN</label>
-              <input type="password" value={pinConfirm} onChange={(e) => setPinConfirm(e.target.value)} placeholder="Repita"
-                className="w-full px-4 py-3 rounded-xl bg-[#2A3942] border border-[#3B4A54] text-white placeholder-[#8696A0] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                maxLength={6} inputMode="numeric" />
-            </div>
           </div>
 
           {erro && <p className="text-red-400 text-sm text-center">{erro}</p>}

@@ -18,7 +18,6 @@ import Destaques from './pages/Destaques'
 import Boloes from './pages/Boloes'
 import Resultados from './pages/Resultados'
 import Manual from './pages/Manual'
-import ModalVincular from './components/ModalVincular'
 
 function P({ children, adminOnly }) {
   return <ProtectedRoute adminOnly={adminOnly}>{children}</ProtectedRoute>
@@ -48,7 +47,6 @@ export default function App() {
             <Route path="/admin" element={<P adminOnly><Admin /></P>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-          <ModalVincular />
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>
