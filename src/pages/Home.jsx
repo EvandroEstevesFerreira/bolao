@@ -20,16 +20,16 @@ export default function Home() {
 
   async function carregarDados() {
     const [selRes, jogosRes, palpitesRes, rankRes] = await Promise.all([
-      supabase.from('selecoes').select('*'),
+      supabase.from('selecoes').select('id, nome, codigo_fifa, bandeira_url, grupo'),
       supabase
         .from('partidas')
-        .select('*')
+        .select('id, selecao_casa_id, selecao_fora_id, data_hora, grupo, fase, status')
         .gte('data_hora', new Date().toISOString())
         .order('data_hora', { ascending: true })
         .limit(5),
       supabase
         .from('palpites')
-        .select('*')
+        .select('partida_id, pontos')
         .eq('usuario_id', perfil.id),
       supabase
         .from('palpites')

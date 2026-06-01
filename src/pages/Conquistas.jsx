@@ -27,10 +27,24 @@ export default function Conquistas() {
     setCarregando(true)
     const [cRes, uRes] = await Promise.all([
       supabase.from('conquistas').select('*').eq('usuario_id', perfil.id).order('ganho_em', { ascending: false }),
-      supabase.from('conquistas').select('tipo, usuario_id, perfis(nickname)').order('ganho_em', { ascending: false }).limit(20),
+      supabase.from('conquistas').select('tipo, usuario_id').order('ganho_em', { ascending: false }).limit(20),
     ])
     setConquistas(cRes.data || [])
-    setTodosUsuarios(uRes.data || [])
+
+    const userIds = [...new Set((uRes.data || []).map(c => c.usuario_id))]
+    let nickMap = {}
+    if (userIds.length > 0) {
+      const { data: nicks } = await supabase
+        .from('perfis_publicos')
+        .select('id, nickname')
+        .in('id', userIds)
+      nicks?.forEach(n => { nickMap[n.id] = n.nickname })
+    }
+    const conqusComNick = (uRes.data || []).map(c => ({
+      ...c,
+      perfis: { nickname: nickMap[c.usuario_id] || 'Jogador' },
+    }))
+    setTodosUsuarios(conqusComNick)
     setCarregando(false)
   }
 

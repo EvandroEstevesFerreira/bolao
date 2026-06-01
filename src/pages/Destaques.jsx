@@ -16,7 +16,7 @@ export default function Destaques() {
 
     const [palpitesRes, perfisRes, partidasRes] = await Promise.all([
       supabase.from('palpites').select('usuario_id, partida_id, pontos, placar_casa, placar_fora'),
-      supabase.from('perfis').select('id, nickname, avatar_url').eq('ativo', true),
+      supabase.from('perfis_publicos').select('id, nickname, avatar_url').eq('ativo', true),
       supabase.from('partidas').select('id, rodada, status').eq('status', 'encerrado'),
     ])
 

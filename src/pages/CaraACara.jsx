@@ -17,7 +17,7 @@ export default function CaraACara() {
 
   async function carregarJogadores() {
     const { data } = await supabase
-      .from('perfis')
+      .from('perfis_publicos')
       .select('id, nickname, avatar_url')
       .eq('ativo', true)
       .neq('id', perfil.id)

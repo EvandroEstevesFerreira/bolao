@@ -30,7 +30,7 @@ export default function Ranking() {
 
     const [palpitesRes, perfisRes, boloesRes, regrasRes, bonusRes] = await Promise.all([
       supabase.from('palpites').select('usuario_id, pontos'),
-      supabase.from('perfis').select('id, nickname, avatar_url, setor_cr').eq('ativo', true),
+      supabase.from('perfis_publicos').select('id, nickname, avatar_url, setor_cr').eq('ativo', true),
       supabase.from('boloes').select('id, valor_arrecadado').limit(1).single(),
       supabase.from('premiacao_regras').select('*').order('posicao'),
       supabase.from('palpites_bonus').select('usuario_id, pontos'),

@@ -1,8 +1,21 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { hashPin, verificarPin } from '../lib/hash'
 
 const AuthContext = createContext(null)
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+async function chamarEdgeFunction(nome, body) {
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/${nome}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY },
+    body: JSON.stringify(body),
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || `Erro ${res.status}`)
+  return data
+}
 
 export function AuthProvider({ children }) {
   const [perfil, setPerfil] = useState(null)
@@ -14,75 +27,30 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function inicializar() {
-    // 1. Verificar sessão Supabase Auth
     const { data: { session } } = await supabase.auth.getSession()
 
     if (session?.user) {
-      const { data: perfilAuth } = await supabase
-        .from('perfis')
-        .select('*')
-        .eq('auth_uid', session.user.id)
-        .eq('ativo', true)
-        .single()
+      await carregarPerfilAuth(session.user)
+      setCarregando(false)
 
-      if (perfilAuth) {
-        const { pin_hash: _, ...seguro } = perfilAuth
-        setPerfil(seguro)
-        localStorage.setItem('bolao_perfil', JSON.stringify(seguro))
-        setCarregando(false)
-        return
-      }
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          await carregarPerfilAuth(session.user)
+        }
+        if (event === 'SIGNED_OUT') {
+          setPerfil(null)
+          localStorage.removeItem('bolao_perfil')
+        }
+      })
+      return () => subscription?.unsubscribe()
     }
 
-    // 2. Fallback: localStorage (legado CPF+PIN)
-    const perfilSalvo = localStorage.getItem('bolao_perfil')
-    if (perfilSalvo) {
-      try {
-        setPerfil(JSON.parse(perfilSalvo))
-      } catch {
-        localStorage.removeItem('bolao_perfil')
-      }
-    }
     setCarregando(false)
 
-    // 3. Listener para mudanças de auth (magic link callback)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
-        const user = session.user
-
-        // Buscar perfil vinculado
-        let { data: perfilAuth } = await supabase
-          .from('perfis')
-          .select('*')
-          .eq('auth_uid', user.id)
-          .eq('ativo', true)
-          .single()
-
-        // Se não achou por auth_uid, tentar por email
-        if (!perfilAuth && user.email) {
-          const { data: perfilEmail } = await supabase
-            .from('perfis')
-            .select('*')
-            .eq('email', user.email)
-            .eq('ativo', true)
-            .single()
-
-          if (perfilEmail) {
-            await supabase
-              .from('perfis')
-              .update({ auth_uid: user.id })
-              .eq('id', perfilEmail.id)
-            perfilAuth = perfilEmail
-          }
-        }
-
-        if (perfilAuth) {
-          const { pin_hash: _, ...seguro } = perfilAuth
-          setPerfil(seguro)
-          localStorage.setItem('bolao_perfil', JSON.stringify(seguro))
-        }
+        await carregarPerfilAuth(session.user)
       }
-
       if (event === 'SIGNED_OUT') {
         setPerfil(null)
         localStorage.removeItem('bolao_perfil')
@@ -92,99 +60,81 @@ export function AuthProvider({ children }) {
     return () => subscription?.unsubscribe()
   }
 
-  // Login legado CPF + PIN
-  async function login(cpf, pin) {
-    const { data, error } = await supabase
+  async function carregarPerfilAuth(user) {
+    let { data: perfilAuth } = await supabase
       .from('perfis')
-      .select('*')
-      .eq('cpf', cpf)
+      .select('id, cpf, nome, nickname, avatar_url, setor_cr, selecao_favorita_id, ativo, is_admin, auth_uid, email, telefone, criado_em')
+      .eq('auth_uid', user.id)
       .eq('ativo', true)
       .single()
 
-    if (error || !data) {
-      throw new Error('CPF não encontrado ou acesso desativado.')
-    }
+    if (!perfilAuth && user.email) {
+      const { data: perfilEmail } = await supabase
+        .from('perfis')
+        .select('id, cpf, nome, nickname, avatar_url, setor_cr, selecao_favorita_id, ativo, is_admin, auth_uid, email, telefone, criado_em')
+        .eq('email', user.email)
+        .eq('ativo', true)
+        .single()
 
-    if (data.pin_hash) {
-      const isHash = data.pin_hash.length === 64 && /^[0-9a-f]+$/.test(data.pin_hash)
-
-      if (isHash) {
-        const ok = await verificarPin(pin, data.pin_hash)
-        if (!ok) throw new Error('PIN incorreto.')
-        const currentHash = await hashPin(pin)
-        if (currentHash !== data.pin_hash) {
-          await supabase.from('perfis').update({ pin_hash: currentHash }).eq('id', data.id)
-        }
-      } else {
-        if (data.pin_hash !== pin) throw new Error('PIN incorreto.')
-        const novoHash = await hashPin(pin)
-        await supabase.from('perfis').update({ pin_hash: novoHash }).eq('id', data.id)
+      if (perfilEmail) {
+        await supabase.from('perfis').update({ auth_uid: user.id }).eq('id', perfilEmail.id)
+        perfilAuth = perfilEmail
       }
     }
 
-    const { pin_hash: _, ...perfilSeguro } = data
-    localStorage.setItem('bolao_perfil', JSON.stringify(perfilSeguro))
-    setPerfil(perfilSeguro)
+    if (perfilAuth) {
+      setPerfil(perfilAuth)
+      localStorage.setItem('bolao_perfil', JSON.stringify(perfilAuth))
+    }
+  }
 
-    // Verificar se precisa vincular email/telefone
-    if (!data.email && !data.telefone) {
+  async function login(cpf, pin) {
+    const data = await chamarEdgeFunction('login-cpf', { cpf, pin })
+
+    if (data.token_hash) {
+      const { error: verifyError } = await supabase.auth.verifyOtp({
+        type: 'magiclink',
+        token_hash: data.token_hash,
+      })
+      if (verifyError) throw new Error('Erro ao estabelecer sessão: ' + verifyError.message)
+    }
+
+    if (data.perfil) {
+      setPerfil(data.perfil)
+      localStorage.setItem('bolao_perfil', JSON.stringify(data.perfil))
+    }
+
+    if (data.precisa_vincular) {
       setPrecisaVincular(true)
     }
 
-    return perfilSeguro
+    return data.perfil
   }
 
-  // Login por E-mail Magic Link
   async function loginEmail(email) {
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-      },
+      options: { emailRedirectTo: `${window.location.origin}/` },
     })
-
     if (error) throw new Error(error.message)
     return { enviado: true }
   }
 
-  // Login por WhatsApp OTP
   async function enviarOtpWhatsApp(telefone) {
-    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/whatsapp-otp`
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-      },
-      body: JSON.stringify({ action: 'enviar', telefone }),
-    })
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.error || 'Erro ao enviar código')
-    return data
+    return chamarEdgeFunction('whatsapp-otp', { action: 'enviar', telefone })
   }
 
   async function verificarOtpWhatsApp(telefone, codigo) {
-    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/whatsapp-otp`
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-      },
-      body: JSON.stringify({ action: 'verificar', telefone, codigo }),
-    })
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.error || 'Erro ao verificar código')
+    const data = await chamarEdgeFunction('whatsapp-otp', { action: 'verificar', telefone, codigo })
 
     if (data.perfil) {
-      localStorage.setItem('bolao_perfil', JSON.stringify(data.perfil))
       setPerfil(data.perfil)
+      localStorage.setItem('bolao_perfil', JSON.stringify(data.perfil))
     }
 
     return data
   }
 
-  // Vincular email ou telefone ao perfil existente
   async function vincularContato(tipo, valor) {
     if (!perfil) throw new Error('Não autenticado')
 
@@ -206,91 +156,29 @@ export function AuthProvider({ children }) {
   }
 
   async function resgatarConvite(token, dadosOriginal) {
-    const dadosPerfil = { ...dadosOriginal, pin: await hashPin(dadosOriginal.pin) }
-    const { data: convite, error: errConvite } = await supabase
-      .from('convites')
-      .select('*')
-      .eq('token', token)
-      .is('usado_em', null)
-      .single()
+    const data = await chamarEdgeFunction('registro', {
+      token,
+      nome: dadosOriginal.nome,
+      nickname: dadosOriginal.nickname,
+      pin: dadosOriginal.pin,
+      cpf: dadosOriginal.cpf || null,
+      setor_cr: dadosOriginal.setor_cr || null,
+      avatar_url: dadosOriginal.avatar_url || null,
+    })
 
-    if (errConvite || !convite) {
-      throw new Error('Convite inválido ou já utilizado.')
-    }
-
-    if (convite.expira_em && new Date(convite.expira_em) < new Date()) {
-      throw new Error('Convite expirado.')
-    }
-
-    if (convite.cpf && dadosPerfil.cpf && convite.cpf !== dadosPerfil.cpf) {
-      throw new Error('CPF não corresponde ao convite.')
-    }
-
-    let perfilExistente = null
-    if (dadosPerfil.cpf) {
-      const { data } = await supabase
-        .from('perfis')
-        .select('*')
-        .eq('cpf', dadosPerfil.cpf)
-        .single()
-      perfilExistente = data
-    }
-
-    let perfilFinal
-
-    if (perfilExistente) {
-      const { data, error } = await supabase
-        .from('perfis')
-        .update({
-          nickname: dadosPerfil.nickname,
-          pin_hash: dadosPerfil.pin,
-          setor_cr: dadosPerfil.setor_cr,
-          avatar_url: dadosPerfil.avatar_url,
-          ativo: true,
-        })
-        .eq('id', perfilExistente.id)
-        .select()
-        .single()
-
-      if (error) throw new Error('Erro ao atualizar perfil.')
-      perfilFinal = data
-    } else {
-      const insertData = {
-        nome: dadosPerfil.nome,
-        nickname: dadosPerfil.nickname,
-        pin_hash: dadosPerfil.pin,
-        setor_cr: dadosPerfil.setor_cr,
-        avatar_url: dadosPerfil.avatar_url,
-      }
-      if (dadosPerfil.cpf) insertData.cpf = dadosPerfil.cpf
-
-      const { data, error } = await supabase
-        .from('perfis')
-        .insert(insertData)
-        .select()
-        .single()
-
-      if (error) throw new Error('Erro ao criar perfil: ' + error.message)
-      perfilFinal = data
-    }
-
-    await supabase
-      .from('convites')
-      .update({ usado_em: new Date().toISOString() })
-      .eq('id', convite.id)
-
-    if (convite.bolao_id) {
-      await supabase.from('bolao_participantes').upsert({
-        bolao_id: convite.bolao_id,
-        usuario_id: perfilFinal.id,
-        papel: 'jogador',
+    if (data.token_hash) {
+      await supabase.auth.verifyOtp({
+        type: 'magiclink',
+        token_hash: data.token_hash,
       })
     }
 
-    const { pin_hash: _, ...perfilSeguro } = perfilFinal
-    localStorage.setItem('bolao_perfil', JSON.stringify(perfilSeguro))
-    setPerfil(perfilSeguro)
-    return perfilSeguro
+    if (data.perfil) {
+      setPerfil(data.perfil)
+      localStorage.setItem('bolao_perfil', JSON.stringify(data.perfil))
+    }
+
+    return data.perfil
   }
 
   async function logout() {
@@ -305,14 +193,13 @@ export function AuthProvider({ children }) {
       .from('perfis')
       .update(dados)
       .eq('id', perfil.id)
-      .select()
+      .select('id, cpf, nome, nickname, avatar_url, setor_cr, selecao_favorita_id, ativo, is_admin, auth_uid, email, telefone, criado_em')
       .single()
 
     if (error) throw new Error('Erro ao atualizar perfil.')
-    const { pin_hash: _, ...seguro } = data
-    localStorage.setItem('bolao_perfil', JSON.stringify(seguro))
-    setPerfil(seguro)
-    return seguro
+    localStorage.setItem('bolao_perfil', JSON.stringify(data))
+    setPerfil(data)
+    return data
   }
 
   return (
